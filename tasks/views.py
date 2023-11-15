@@ -4,13 +4,13 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm, CreateTeamForm
 from tasks.helpers import login_prohibited
-
+from tasks.models import User, Team
 
 @login_required
 def dashboard(request):
@@ -166,4 +166,20 @@ class CreateTeamView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         # TODO: Update with the URL of the team's detail page or a list of teams
         # For now, redirecting to the dashboard
-        return reverse('dashboard')
+        return reverse('team_dashboard', args=[self.object.id])
+
+class TeamDashboardView(LoginRequiredMixin, View):
+    """Display the dashboard for a specific team."""
+
+    def get(self, request, id):
+        # Retrieve the team by id, or show a 404 error if not found
+        team = get_object_or_404(Team, id=id)
+
+        # You can add more con  text data as needed
+        context = {
+            'team': team,
+            'members': team.members.all(),
+            # Add more context data here
+        }
+
+        return render(request, 'team_dashboard.html', context)
