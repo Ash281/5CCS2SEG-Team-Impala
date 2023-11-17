@@ -1,6 +1,5 @@
-{% extends 'base_content.html' %}
-{% block content %}
-<div class = "col-sm-12  col-md-6 offset-md-3">
+
+<!-- <div class = "col-sm-12 col-md-6 offset-md-3">
   <div class="containers">
     <h1>Current Tasks</h1>
   
@@ -41,6 +40,50 @@
     </div>
   </div>
 </div>
+ -->
 
+{% extends 'base_content.html' %}
 
+{% block main_content %}
+<div class = "col-sm-12 col-md-6 offset-md-3">
+  <div class="containers">
+    <h1>Current Tasks</h1>
+
+    <div class="group">
+      <input type="checkbox" id="xd" />
+      <label for="xd">Task 1</label>
+    </div>
+
+    <div class="group">
+      <input type="checkbox" id="figma" />
+      <label for="figma">Task 2</label>
+    </div>
+
+    <div class="group">
+      <input type="checkbox" id="sketch" />
+      <label for="sketch">Task 3</label>
+    </div>
+  </div>
+</div>
+
+<div class = "col-sm-12  col-md-6 offset-md-3">
+  <div class="containers">
+    <h1>Upcoming Tasks</h1>
+
+    <div class="group">
+      <input type="checkbox" id="s" />
+      <label for="s">Task 1</label>
+    </div>
+
+    <div class="group">
+      <input type="checkbox" id="ss" />
+      <label for="ss">Task 2</label>
+    </div>
+
+    <div class="group">
+      <input type="checkbox" id="sss" />
+      <label for="sss">Task 3</label>
+    </div>
+  </div>
+</div>
 {% endblock %}

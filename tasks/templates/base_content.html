@@ -2,7 +2,17 @@
 {% block body %}
   
   {% include 'partials/navbar.html' %}
-  {% include 'partials/sidebar.html' %} 
+ 
+  <div class="row">
+    <div class="col-md-1">
+      {% include 'partials/sidebar.html' %}
+    </div>
+
+    <div class="col-md-6">
+      {% block main_content %}{% endblock %}
+    </div>
+  </div>
+  
   {% include 'partials/messages.html' %}
 
   {% block content %}

@@ -180,3 +180,23 @@ main {
 .scrollarea {
   overflow-y: auto;
 }
+
+/* Customize the links inside the collapsed content */
+.collapse a {
+  color: red; /* Dark text color for links */
+  display: block; /* Ensure links are block-level elements */
+  padding: 5px 10px; /* Add padding for better appearance */
+  text-decoration: none; /* Remove underline */
+  border-radius: 5px; /* Add rounded corners */
+  margin-bottom: 5px; /* Add spacing between links */
+}
+
+/* #bg-content {
+  margin: 0;
+  padding: 0;
+  background: url('/static/cat.jpg') center center/cover no-repeat;
+  height: 100vh; 
+  display: flex;
+  flex-direction: column;
+} */
+
