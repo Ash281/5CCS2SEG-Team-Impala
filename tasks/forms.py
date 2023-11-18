@@ -30,6 +30,19 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'username', 'email']
 
+class EmailVerificationForm(forms.Form):
+    username = forms.CharField(max_length=100)
+
+    def clean(self):
+        try:
+            self.username = self.cleaned_data.get("username")
+            user = User.objects.get(username=self.username)
+        except:
+            self.add_error('username', 'User not found!')
+    
+    def get_username(self):
+        return self.username
+
 class NewPasswordMixin(forms.Form):
     """Form mixing for new_password and password_confirmation fields."""
 
@@ -53,6 +66,14 @@ class NewPasswordMixin(forms.Form):
         if new_password != password_confirmation:
             self.add_error('password_confirmation', 'Confirmation does not match password.')
 
+    def save(self, user):
+        """Save the user's new password."""
+
+        new_password = self.cleaned_data['new_password']
+        if user is not None:
+            user.set_password(new_password)
+            user.save()
+        return user
 
 class PasswordForm(NewPasswordMixin):
     """Form enabling users to change their password."""

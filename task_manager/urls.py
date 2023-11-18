@@ -25,6 +25,9 @@ urlpatterns = [
     path('log_in/', views.LogInView.as_view(), name='log_in'),
     path('log_out/', views.log_out, name='log_out'),
     path('password/', views.PasswordView.as_view(), name='password'),
+    path('new_password/<uuid:token>/', views.ChangePassword.as_view(), name='new_password'),
     path('profile/', views.ProfileUpdateView.as_view(), name='profile'),
     path('sign_up/', views.SignUpView.as_view(), name='sign_up'),
+    path('email_verify/', views.EmailVerification.as_view(), name='email_verify'),
+
 ]
