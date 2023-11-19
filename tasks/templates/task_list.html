@@ -1,0 +1,30 @@
+{% load static %}
+
+<html>
+<head>
+  <link rel="stylesheet" href="{% static 'taskstyle.css' %}">
+</head>
+  <body>
+    <h1 id="example-text">{{ user.username }}'s tasks</h1> <!-- change to Team "team name" tasks ,, bcoz tasks are for teams-->
+    <table>
+      <tr>
+          <th>Task title</th>
+          <th>Task description</th>
+          <th>Due Date</th>
+          <th>Assigned to</th>
+      </tr>
+      {% for task in tasks %}
+      <tr>
+          <td>{{ task.task_title }}</td>
+          <td>{{ task.task_description }}</td>
+          <td>{{ task.due_date }}</td>
+          <td>{{ task.assignees }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3">No tasks available.</td></tr>
+      {% endfor %}
+  </table>
+  
+
+  </body>
+</html>

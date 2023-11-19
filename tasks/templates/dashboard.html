@@ -4,6 +4,9 @@
   <div class="row">
     <div class="col-12">
       <h1>Welcome to your dashboard {{ user.username }}</h1>
+      <p>
+        <a href='{% url 'create_task' %}' class="btn btn-lg btn-secondary">click here</a>
+      </p>
     </div>
   </div>
 </div>

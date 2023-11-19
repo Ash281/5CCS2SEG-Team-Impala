@@ -2,6 +2,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from libgravatar import Gravatar
+import datetime
 
 class User(AbstractUser):
     """Model used for user authentication, and team member related information."""
@@ -40,3 +41,16 @@ class User(AbstractUser):
         """Return a URL to a miniature version of the user's gravatar."""
         
         return self.gravatar(size=60)
+    
+class Task(models.Model):
+    task_title = models.CharField(max_length = 50, default='')
+    task_description = models.CharField(max_length = 500, default='')
+    due_date = models.DateField(default=datetime.date.today)
+    assignees = models.CharField(max_length = 50, default='')
+    # assignees = forms.ModelMultipleChoiceField(
+    #     queryset=TeamMember.objects.all(),
+    #     widget=forms.CheckboxSelectMultiple(),  # Optional: For checkbox style selection
+    #     required=False
+    # )
+    def __str__(self):
+        return self.task_title

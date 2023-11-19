@@ -8,9 +8,9 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
-from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm
+from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm, CreateTaskForm
 from tasks.helpers import login_prohibited
-
+from .models import Task
 
 @login_required
 def dashboard(request):
@@ -26,6 +26,20 @@ def home(request):
 
     return render(request, 'home.html')
 
+def create_task(request):
+    if request.method == 'POST':
+        form = CreateTaskForm(request.POST)
+        if form.is_valid():
+            form.save()
+        
+    else:
+        form = CreateTaskForm()
+
+    return render(request, 'create_task.html', {'form': form})
+
+def task_list(request):
+    tasks = Task.objects.all()  
+    return render(request, 'task_list.html', {'tasks': tasks})
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
