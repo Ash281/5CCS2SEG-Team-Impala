@@ -1,0 +1,12 @@
+[
+  {
+    "model": "tasks.task",
+    "pk": 1,
+    "fields": {
+      "task_title": "Task 1",
+      "task_description": "Using this for our website :)",
+      "due_date": "2023-11-22",
+      "assignees": "xxxxx" 
+    }
+  }
+]
