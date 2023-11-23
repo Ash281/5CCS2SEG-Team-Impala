@@ -168,6 +168,7 @@ class CreateTeamView(LoginRequiredMixin, FormView):
         # For now, redirecting to the dashboard
         return reverse('team_dashboard', args=[self.object.id])
 
+
 class TeamDashboardView(LoginRequiredMixin, View):
     """Display the dashboard for a specific team."""
 

@@ -4,6 +4,9 @@ from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 from libgravatar import Gravatar
+from django.core.validators import MaxLengthValidator, MinLengthValidator
+from django.db import IntegrityError
+
 
 class User(AbstractUser):
     """Model used for user authentication, and team member related information."""

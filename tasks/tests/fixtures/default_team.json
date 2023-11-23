@@ -1,0 +1,14 @@
+[
+    {
+      "model": "tasks.team",
+      "pk": 1,
+      "fields": {
+        "team_name": "Team Impala",
+        "team_description": "SEG Group Coursework Project",
+        "members": ["@ishikadav"],
+        "created_at": "2023-11-23T15:30:45.123456Z",
+        "is_active": true
+      }
+    }
+  ]
+  
