@@ -1,7 +1,21 @@
 {% extends 'base.html' %}
 {% block body %}
+  
   {% include 'partials/navbar.html' %}
+  
+  {% if user.is_authenticated %}
+  <div class="row">
+    <div class="col-md-2">
+      {% include 'partials/sidebar.html' %}
+    </div>
+  {% endif %}
+
+    <div class="col-md-6">
+      {% block main_content %}{% endblock %}
+    </div>
+  </div>
+  
   {% include 'partials/messages.html' %}
-  {% block content %}
-  {% endblock %}
+
+  
 {% endblock %}
