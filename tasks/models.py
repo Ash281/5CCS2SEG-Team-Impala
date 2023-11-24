@@ -19,6 +19,7 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank=False)
+    email_verification_token = models.UUIDField(null=True, blank=True)
 
 
     class Meta:

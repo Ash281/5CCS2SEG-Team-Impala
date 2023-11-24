@@ -147,3 +147,10 @@ REDIRECT_URL_WHEN_LOGGED_IN = 'dashboard'
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'impalaseg@gmail.com'
+EMAIL_HOST_PASSWORD = 'rspuxroqkvlsinmw'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

@@ -1,5 +1,6 @@
 """Unit tests for the User model."""
 from django.core.exceptions import ValidationError
+import uuid
 from django.test import TestCase
 from tasks.models import User
 
@@ -126,6 +127,23 @@ class UserModelTestCase(TestCase):
     def test_full_name_must_be_correct(self):
         full_name = self.user.full_name()
         self.assertEqual(full_name, "John Doe")
+
+
+    def test_email_verification_token_can_be_null(self):
+        self.user.email_verification_token = None
+        self._assert_user_is_valid()
+
+    def test_email_verification_token_can_be_blank(self):
+        self.user.email_verification_token = ""
+        self._assert_user_is_valid()
+
+    def test_email_verification_token_is_of_type_uuid(self):
+        self.user.email_verification_token = str(uuid.uuid4())
+        self._assert_user_is_valid()
+
+    def test_email_verification_invalid_token(self):
+        self.user.email_verification_token = "badtoken"
+        self._assert_user_is_invalid()
 
 
     def test_default_gravatar(self):
