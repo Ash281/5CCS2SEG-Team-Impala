@@ -1,7 +1,11 @@
 """Forms for the tasks app."""
+import uuid
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
+from task_manager import settings
+
+from django.core.mail import send_mail
 from .models import User
 
 class LogInForm(forms.Form):
@@ -34,14 +38,32 @@ class EmailVerificationForm(forms.Form):
     username = forms.CharField(max_length=100)
 
     def clean(self):
+        super().clean()
         try:
             self.username = self.cleaned_data.get("username")
             user = User.objects.get(username=self.username)
         except:
             self.add_error('username', 'User not found!')
+        return self.cleaned_data
     
-    def get_username(self):
-        return self.username
+    def save(self):
+        if self.is_valid():
+            username = self.cleaned_data.get("username")
+            user = User.objects.get(username=username)
+
+            token = str(uuid.uuid4())
+            self.send_email_verification(user.email, token)
+
+            user.email_verification_token = token
+            user.save()        
+    
+    
+    def send_email_verification(self, email, token):
+        subject = 'Reset Password Link'
+        body = f"Hi there, \nThis is your link to reset your password: http://127.0.0.1:8000/new_password/{token}/"
+        send_mail(subject, body, settings.EMAIL_HOST_USER, [email])
+ 
+
 
 class NewPasswordMixin(forms.Form):
     """Form mixing for new_password and password_confirmation fields."""
@@ -120,7 +142,7 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
     def save(self):
         """Create a new user."""
 
-        super().save(commit=False)
+        super(forms.ModelForm, self).save(commit=False)
         user = User.objects.create_user(
             self.cleaned_data.get('username'),
             first_name=self.cleaned_data.get('first_name'),
@@ -128,4 +150,5 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
             email=self.cleaned_data.get('email'),
             password=self.cleaned_data.get('new_password'),
         )
+       
         return user

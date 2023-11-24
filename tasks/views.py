@@ -1,5 +1,4 @@
 import uuid
-from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -83,7 +82,6 @@ class LogInView(LoginProhibitedMixin, View):
     def render(self):
         """Render log in template with blank log in form."""
 
-
         form = LogInForm()
         return render(self.request, 'log_in.html', {'form': form, 'next': self.next})
 
@@ -95,36 +93,21 @@ def log_out(request):
     return redirect('home')
 
 class EmailVerification(LoginProhibitedMixin, View):
+    
     def get(self, request):
         """Display email_verify template."""
-        return self.render()
+
+        form = EmailVerificationForm()
+        return render(self.request, 'email_verify.html', {'form': form})
     
     def post(self, request):
         form = EmailVerificationForm(request.POST)
         if form.is_valid():
-            
-            user = User.objects.get(username=form.get_username())
-            token = str(uuid.uuid4())
-            self.send_email_verification(user.email, token)
-
-            user.email_verification_token = token
-            user.save()
+            form.save()
             messages.add_message(request, messages.SUCCESS, "We have sent you an email please check your inbox!")
         else:
             messages.add_message(request, messages.ERROR, "User not found please check your details again")
 
-        return self.render()
-    
-    
-    def send_email_verification(self, email, token):
-        subject = 'Reset Password Link'
-        body = f"Hi there, \nThis is your link to reset your password: http://127.0.0.1:8000/new_password/{token}/"
-        send_mail(subject, body, settings.EMAIL_HOST_USER, [email])
-
-    def render(self):
-        """Render email_verify template with blank log in form."""
-
-        form = EmailVerificationForm()
         return render(self.request, 'email_verify.html', {'form': form})
     
 
@@ -136,7 +119,7 @@ class ChangePassword(FormView):
         try:
             user = User.objects.filter(email_verification_token=uuid.UUID(str(token))).first()
             return user
-        except User.DoesNotExist:
+        except:
             return None
 
     def get(self, *args, **kwargs):
@@ -147,7 +130,7 @@ class ChangePassword(FormView):
             return render(self.request,'new_password.html', {'token': token, 'form' : NewPasswordMixin()})
         else:
             messages.add_message(self.request, messages.ERROR, "User not found")
-            return render(self.request, 'home.html')
+            return redirect(self.get_fail_redirect_url())
 
     def post(self, request, **kwargs):
         token = kwargs.get('token')
@@ -156,20 +139,25 @@ class ChangePassword(FormView):
         form = NewPasswordMixin(request.POST)
 
         if form.is_valid():
-            print("Form is valid")
+            
+            user.email_verification_token = None
             form.save(user)
-            return redirect(self.get_success_url())
+            return redirect(self.get_success_redirect_url())
         else:
             messages.add_message(self.request, messages.ERROR, "Password Invalid!")
-            return render(self.request,'new_password.html', {'token': token, 'form' : NewPasswordMixin()})
+            return render(self.request,'new_password.html', {'token': token, 'form' : form})
 
     def form_valid(self, form):
-        form.save()
+        form.save(self.user)
         return super().form_valid(form)
 
-    def get_success_url(self):
+    def get_success_redirect_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Password updated!")
         return reverse('log_in')
+    
+    def get_fail_redirect_url(self):
+        messages.add_message(self.request, messages.ERROR, "User not found!")
+        return reverse('email_verify')
 
 class PasswordView(LoginRequiredMixin, FormView):
     """Display password change screen and handle password change requests."""
