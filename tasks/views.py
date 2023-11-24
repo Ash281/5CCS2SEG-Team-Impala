@@ -4,6 +4,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
+from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
@@ -152,35 +153,58 @@ class SignUpView(LoginProhibitedMixin, FormView):
     def get_success_url(self):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
+# ALL TEAM RELATED VIEWS
+
 class CreateTeamView(LoginRequiredMixin, FormView):
     """Display the sign up screen and handle sign ups."""
 
     form_class = CreateTeamForm
     template_name = "create_team.html"
 
+    
     def form_valid(self, form):
-        self.object = form.save()
+        # self.object = form.save(user=self.request.user)
+        # messages.add_message(self.request, messages.SUCCESS, "Team created successfully!")
+        # print(self.object)
+        # return super().form_valid(form)
+
+        team = form.save(commit=False)
+        team.save()
+
+        team.members.add(self.request.user)
         messages.add_message(self.request, messages.SUCCESS, "Team created successfully!")
+        
         return super().form_valid(form)
+
 
     def get_success_url(self):
         # TODO: Update with the URL of the team's detail page or a list of teams
         # For now, redirecting to the dashboard
-        return reverse('team_dashboard', args=[self.object.id])
+        return reverse('team_dashboard')
 
 
 class TeamDashboardView(LoginRequiredMixin, View):
     """Display the dashboard for a specific team."""
+    
+    def get(self, request, id):
+        try:
+            team = Team.objects.get(id=id)
+        except Team.DoesNotExist:
+            raise Http404("Team does not exist")
 
     def get(self, request, id):
         # Retrieve the team by id, or show a 404 error if not found
         team = get_object_or_404(Team, id=id)
 
-        # You can add more con  text data as needed
+        # You can add more context data as needed
         context = {
-            'team': team,
+            'team_name': team.team_name,
+            'team_description': team.team_description,
             'members': team.members.all(),
+            'created_at': team.created_at,
             # Add more context data here
         }
 
+        # return reverse('team_dashboard')
         return render(request, 'team_dashboard.html', context)
+    
