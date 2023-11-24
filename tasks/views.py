@@ -17,7 +17,10 @@ def dashboard(request):
     """Display the current user's dashboard."""
 
     current_user = request.user
-    return render(request, 'dashboard.html', {'user': current_user})
+    first_three = Task.objects.order_by('due_date')[:3]
+    next_three = Task.objects.order_by('due_date')[3:6]
+
+    return render(request, 'dashboard.html', {'user': current_user, 'first_three': first_three, 'next_three': next_three})
 
 
 @login_prohibited
@@ -38,7 +41,7 @@ def create_task(request):
     return render(request, 'create_task.html', {'form': form})
 
 def task_list(request):
-    tasks = Task.objects.all()  
+    tasks = Task.objects.order_by('due_date')
     return render(request, 'task_list.html', {'tasks': tasks})
 
 class LoginProhibitedMixin:

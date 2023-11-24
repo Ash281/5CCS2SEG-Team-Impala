@@ -44,10 +44,13 @@ class User(AbstractUser):
         return self.gravatar(size=60)
 
 class Task(models.Model):
+    PRIORITY_CHOICES = [ ('CR', 'Critical'), ('MD', 'Medium'), ('LW', 'Low'), ]
+
     task_title = models.CharField(max_length = 50, default='', blank=False, unique=True, validators=[MinLengthValidator(3, message="Title must be a minimum of 3 characters")])
     task_description = models.CharField(max_length = 500, default='', blank=False,  validators=[MinLengthValidator(10, message="Description must be a minimum of 10 characters")])
     due_date = models.DateField(default=datetime.date.today, validators=[validate_not_past_date])
     assignees = models.CharField(max_length = 50, default='')
+    priority = models.CharField(max_length=2, choices=PRIORITY_CHOICES)
     # assignees = forms.ModelMultipleChoiceField(
     #     queryset=TeamMember.objects.all(),
     #     widget=forms.CheckboxSelectMultiple(),  # Optional: For checkbox style selection

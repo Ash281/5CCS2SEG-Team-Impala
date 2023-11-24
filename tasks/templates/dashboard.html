@@ -48,41 +48,28 @@
 <div class = "col-sm-12 col-md-6">
   <div class="containers">
     <h1>Current Tasks</h1>
+    {% for task in first_three %}
     <div class="group">
-      <input type="checkbox" id="xd" />
-      <label for="xd">Task 1</label>
+        <input type="checkbox" id="task_{{ task.task_title }}" />
+        <label for="task_{{ task.task_title }}">{{ task.task_title }}</label>
     </div>
-
-    <div class="group">
-      <input type="checkbox" id="figma" />
-      <label for="figma">Task 2</label>
-    </div>
-
-    <div class="group">
-      <input type="checkbox" id="sketch" />
-      <label for="sketch">Task 3</label>
-    </div>
+  {% empty %}
+    <p>No current tasks</p>
+  {% endfor %}
   </div>
 </div>
 
 <div class = "col-sm-12  col-md-6">
   <div class="containers">
     <h1>Upcoming Tasks</h1>
-
+    {% for task in next_three %}
     <div class="group">
-      <input type="checkbox" id="s" />
-      <label for="s">Team 1</label>
+        <input type="checkbox" id="task_{{ task.task_title }}" />
+        <label for="task_{{ task.task_title }}">{{ task.task_title }}</label>
     </div>
-
-    <div class="group">
-      <input type="checkbox" id="ss" />
-      <label for="ss">Team 2</label>
-    </div>
-
-    <div class="group">
-      <input type="checkbox" id="sss" />
-      <label for="sss">Team 3</label>
-    </div>
+  {% empty %}
+    <p>No current tasks</p>
+  {% endfor %}
     <p>
       <a href='{% url 'create_task' %}' class="btn btn-lg btn-secondary">click here</a>
     </p>
