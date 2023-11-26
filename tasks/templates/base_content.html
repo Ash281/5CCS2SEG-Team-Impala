@@ -4,13 +4,18 @@
   {% include 'partials/navbar.html' %}
  
   <div class="row">
-    <div class="col-md-1">
+    <div class="col-md-2 flex-column">
       {% include 'partials/sidebar.html' %}
     </div>
 
-    <div class="col-md-6">
-      {% block main_content %}{% endblock %}
+    <div class="col-md-8">
+      {% block main_content %}
+      {% endblock %}
     </div>
+    <div class="col-md-2 bg-primary flex-column">
+      {% include 'partials/right_sidebar.html' %}
+    </div>
+
   </div>
   
   {% include 'partials/messages.html' %}

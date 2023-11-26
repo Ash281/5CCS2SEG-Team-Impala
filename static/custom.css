@@ -125,7 +125,14 @@ h3.profile-title {
 
 
 /* Sidebar */
+body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
 
+html {
+  height: -webkit-fill-available;
+}
 main {
   height: 100vh;
   height: -webkit-fill-available;
@@ -189,6 +196,26 @@ main {
   text-decoration: none; /* Remove underline */
   border-radius: 5px; /* Add rounded corners */
   margin-bottom: 5px; /* Add spacing between links */
+}
+.layout-container {
+  height: 100vh; 
+  position:fixed; 
+  top:0; 
+  z-index:99;
+  width:100%;
+  right: 0;
+  bottom: 0;
+}
+main {
+ width:100%;
+ float:left;
+}
+aside {
+ width:25%;
+ float:left;
+}
+.layout-container:after {
+  clear:both;
 }
 
 /* #bg-content {
