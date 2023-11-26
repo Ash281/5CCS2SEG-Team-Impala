@@ -1,12 +1,15 @@
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinLengthValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 from libgravatar import Gravatar
+
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import IntegrityError
 
+import datetime
+from .validators import validate_not_past_date
 
 class User(AbstractUser):
     """Model used for user authentication, and team member related information."""
@@ -22,6 +25,7 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank=False)
+    email_verification_token = models.UUIDField(null=True, blank=True)
 
 
     class Meta:
@@ -93,3 +97,17 @@ class Team(models.Model):
             return f'{hours} hours, {minutes} minutes'
         else:
             return f'{minutes} minutes, {seconds} seconds'
+
+class Task(models.Model):
+    task_title = models.CharField(max_length = 50, default='', blank=False, unique=True, validators=[MinLengthValidator(3, message="Title must be a minimum of 3 characters")])
+    task_description = models.CharField(max_length = 500, default='', blank=False,  validators=[MinLengthValidator(10, message="Description must be a minimum of 10 characters")])
+    due_date = models.DateField(default=datetime.date.today, validators=[validate_not_past_date])
+    assignees = models.CharField(max_length = 50, default='')
+    # assignees = forms.ModelMultipleChoiceField(
+    #     queryset=TeamMember.objects.all(),
+    #     widget=forms.CheckboxSelectMultiple(),  # Optional: For checkbox style selection
+    #     required=False
+    # )
+    def __str__(self):
+        return self.task_title
+

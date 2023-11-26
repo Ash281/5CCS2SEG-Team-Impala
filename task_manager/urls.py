@@ -25,9 +25,17 @@ urlpatterns = [
     path('log_in/', views.LogInView.as_view(), name='log_in'),
     path('log_out/', views.log_out, name='log_out'),
     path('password/', views.PasswordView.as_view(), name='password'),
+    path('new_password/<uuid:token>/', views.ChangePassword.as_view(), name='new_password'),
     path('profile/', views.ProfileUpdateView.as_view(), name='profile'),
     path('sign_up/', views.SignUpView.as_view(), name='sign_up'),
+
     path('create_team/', views.CreateTeamView.as_view(), name='create_team'),
     # path('team/<int:id>/dashboard/', views.TeamDashboardView.as_view(), name='team_dashboard'),
     path('team/<int:id>/', views.TeamDashboardView.as_view(), name='team_dashboard'),
+
+    path('email_verify/', views.EmailVerification.as_view(), name='email_verify'),
+
+    path('create_task/', views.create_task, name='create_task'),
+    path('task_list/', views.task_list, name='task_list'),
+
 ]
