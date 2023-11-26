@@ -163,7 +163,6 @@ class CreateTeamView(LoginRequiredMixin, FormView):
 
     
     def form_valid(self, form):
-        # self.object = form.save(user=self.request.user)
         # messages.add_message(self.request, messages.SUCCESS, "Team created successfully!")
         # print(self.object)
         # return super().form_valid(form)
@@ -173,24 +172,13 @@ class CreateTeamView(LoginRequiredMixin, FormView):
 
         team.members.add(self.request.user)
         messages.add_message(self.request, messages.SUCCESS, "Team created successfully!")
-        
-        return super().form_valid(form)
+        # print("Newly created team ID:", team.id)
+        return redirect('team_dashboard', id=team.id)
 
-
-    def get_success_url(self):
-        # TODO: Update with the URL of the team's detail page or a list of teams
-        # For now, redirecting to the dashboard
-        return reverse('team_dashboard')
 
 
 class TeamDashboardView(LoginRequiredMixin, View):
     """Display the dashboard for a specific team."""
-    
-    def get(self, request, id):
-        try:
-            team = Team.objects.get(id=id)
-        except Team.DoesNotExist:
-            raise Http404("Team does not exist")
 
     def get(self, request, id):
         # Retrieve the team by id, or show a 404 error if not found
