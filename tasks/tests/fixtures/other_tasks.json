@@ -6,7 +6,8 @@
       "task_title": "Task 2",
       "task_description": "Using this for our website 2 :)",
       "due_date": "2024-10-11",
-      "assignees": "xxxxx" 
+      "assignees": "xxxxx",
+      "priority": "LW" 
     }
   },
 
@@ -17,7 +18,8 @@
       "task_title": "Task 3",
       "task_description": "Using this for our website 3 :)",
       "due_date": "2024-10-12",
-      "assignees": "xxxxx" 
+      "assignees": "xxxxx",
+      "priority": "LW" 
     }
   },
   
@@ -28,7 +30,8 @@
       "task_title": "Task 4",
       "task_description": "Using this for our website 4 :)",
       "due_date": "2024-10-13",
-      "assignees": "xxxxx" 
+      "assignees": "xxxxx",
+      "priority": "LW"  
     }
   }
 ]

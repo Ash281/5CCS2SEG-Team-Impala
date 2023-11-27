@@ -8,19 +8,74 @@
 </head>
   <body>
     <h1 id="example-text">{{ user.username }}'s tasks</h1> <!-- change to Team "team name" tasks ,, bcoz tasks are for teams-->
-    <table>
+   
+  <form method="get">
+    <label for="sort_by">Sort by:</label>
+    <select name="sort_by" id="sort_by" onchange="this.form.submit()">
+        <option value="due_date" {% if sort_by == "due_date" %}selected{% endif %}>Due Date</option>
+        <option value="priority" {% if sort_by == "priority" %}selected{% endif %}>Priority</option>
+        <option value="status" {% if sort_by == "status" %}selected{% endif %}>Status</option>
+        <option value="task_title" {% if sort_by == "task_title" %}selected{% endif %}>Title</option>
+    </select>
+</form>
+
+
+<form method="get">
+  <label for="filter_by">Filter by:</label>
+  <select name="filter_by" id="filter_by" onchange="showDateRange(this.value)">
+      <option value="">--Select Filter--</option>
+      <option value="high_priority" {% if filter_by == "high_priority" %}selected{% endif %}>High Priority</option>
+      <option value="med_priority" {% if filter_by == "med_priority" %}selected{% endif %}>Medium Priority</option>
+      <option value="low_priority" {% if filter_by == "low_priority" %}selected{% endif %}>Low Priority</option>
+      <option value="comp_status" {% if filter_by == "comp_status" %}selected{% endif %}>Complete</option>
+      <option value="incomp_status" {% if filter_by == "incomp_status" %}selected{% endif %}>Incomplete</option>
+      <option value="date_range">Date Range</option>
+  </select>
+
+    <!-- Hidden date range inputs -->
+    <div id="dateRange" style="display: none;">
+      <label for="start_date">Start Date:</label>
+      <input type="date" id="start_date" name="start_date">
+
+      <label for="end_date">End Date:</label>
+      <input type="date" id="end_date" name="end_date">
+  </div>
+
+  <button type="submit">Filter</button>
+  <input type="text" name="search" placeholder="Search by task title" value="{{ request.GET.search }}">
+    <button type="submit">Search</button>
+</form>
+
+<script>
+function showDateRange(value) {
+  var dateRangeDiv = document.getElementById('dateRange');
+  if (value === 'date_range') {
+      dateRangeDiv.style.display = 'block';
+  } else {
+      dateRangeDiv.style.display = 'none';
+  }
+}
+</script>
+
+
+  <table>
       <tr>
           <th>Task title</th>
           <th>Task description</th>
           <th>Due Date</th>
           <th>Assigned to</th>
+          <th>Priority</th>
+          <th>Status</th>
       </tr>
       {% for task in tasks %}
       <tr>
-          <td>{{ task.task_title }}</td>
+
+        <td class="clickable-cell"><a href="{% url 'task_detail' task.id %}">{{ task.task_title }}</a></td>
           <td>{{ task.task_description }}</td>
           <td>{{ task.due_date }}</td>
           <td>{{ task.assignees }}</td>
+          <td>{{ task.get_priority_display }}</td>
+          <td>{{ task.get_status_display }}</td>
       </tr>
       {% empty %}
       <tr><td colspan="3">No tasks available.</td></tr>

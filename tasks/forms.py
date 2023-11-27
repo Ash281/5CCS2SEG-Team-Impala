@@ -190,12 +190,13 @@ class CreateTeamForm(forms.ModelForm):
 class CreateTaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['task_title', 'task_description', 'due_date', 'assignees']
+        fields = ['task_title', 'task_description', 'due_date', 'assignees', 'priority']
         labels = {
             'task_title': 'Task title',
             'task_description': 'Task description',
             'due_date': 'Due date',
-            'assignees': 'Assign to'
+            'assignees': 'Assign to', 
+            'priority': 'Priority'
         }
         widgets = { 'task_description': forms.Textarea(), 'due_date': forms.DateInput(attrs={'type': 'date'}) }
    
