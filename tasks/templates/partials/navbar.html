@@ -1,4 +1,5 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+{% load static %}
+<nav class="navbar navbar-expand-lg mb-3">
   <div class="container">
     <a class="navbar-brand" href="{% url 'dashboard' %}">
       Jello tings
@@ -7,7 +8,9 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     {% if user.is_authenticated %}
-      {% include 'partials/menu.html' %}
+    {% include 'partials/menu.html' %}
     {% endif %}
   </div>
 </nav>
+
+<link rel="stylesheet" href="{% static 'custom.css' %}">

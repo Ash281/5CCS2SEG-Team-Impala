@@ -9,6 +9,9 @@
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ next }}">
         {% include 'partials/bootstrap_form.html' with form=form %}
+        <a href='{% url 'email_verify' %}' class="btn btn-lg btn-secondary">
+          Forget Password
+        </a>
         <input type="submit" value="Log in" class="btn btn-primary">
       </form>
     </div>
