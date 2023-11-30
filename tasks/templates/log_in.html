@@ -4,16 +4,19 @@
 <div class="container">
   <div class="row">
     <div class="col-sm-12 col-md-6 offset-md-3">
-      <h1>Log in</h1>
-      <form action="{% url 'log_in' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ next }}">
-        {% include 'partials/bootstrap_form.html' with form=form %}
-        <a href='{% url 'email_verify' %}' class="btn btn-lg btn-secondary">
+      <div class="card cover-card mx-auto text-center">
+        <h1 class="cover-heading">Jello</h1>
+        <p class="cover-text">by Impala Team</p>
+        <form action="{% url 'log_in' %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next }}">
+          {% include 'partials/bootstrap_form.html' with form=form %}
+          <input type="submit" value="Log in" class="btn btn-lg">
+        </form>
+        <a href='{% url 'email_verify' %}' class="btn mt-2">
           Forget Password
         </a>
-        <input type="submit" value="Log in" class="btn btn-primary">
-      </form>
+      </div>
     </div>
   </div>
 </div>
