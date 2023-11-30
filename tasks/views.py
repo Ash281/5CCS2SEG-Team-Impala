@@ -320,7 +320,7 @@ class CreateTeamView(LoginRequiredMixin, FormView):
         # print(self.object)
         # return super().form_valid(form)
 
-        team = form.save(commit=False)
+        team = form.save()
         team.save()
 
         team.members.add(self.request.user)
@@ -343,9 +343,47 @@ class TeamDashboardView(LoginRequiredMixin, View):
             'team_description': team.team_description,
             'members': team.members.all(),
             'created_at': team.created_at,
+            'id': id
             # Add more context data here
         }
 
         # return reverse('team_dashboard')
+        
+        print(f"All teams: {id}")
         return render(request, 'team_dashboard.html', context)
     
+class RemoveMembersView(LoginRequiredMixin, View):
+    """View to display a page for removing members from a team."""
+
+    template_name = 'remove_member.html'  # Create a new template for this view
+
+    def get(self, request, id):
+        team = get_object_or_404(Team, id=id)
+
+        # Ensure that the logged-in user is the owner of the team
+        # if request.user != team.owner:
+        #     messages.add_message(request, messages.WARNING, "You do not have permission to remove members.")
+        #     return redirect('team_dashboard', id=team.id)
+
+        context = {'team': team}
+        return render(request, self.template_name, context)
+
+    def post(self, request, id):
+        team = get_object_or_404(Team, id=id)
+
+        # Ensure that the logged-in user is the owner of the team
+        # if request.user != team.owner:
+        #     messages.add_message(request, messages.WARNING, "You do not have permission to remove members.")
+        #     return redirect('team_dashboard', id=team.id)
+
+        members_to_remove_ids = request.POST.getlist('members_to_remove')
+
+        for member_id in members_to_remove_ids:
+            member_to_remove = get_object_or_404(User, id=member_id)
+            if member_to_remove in team.members.all():
+                team.members.remove(member_to_remove)
+                messages.add_message(request, messages.SUCCESS, f"Member {member_to_remove.username} removed successfully.")
+            else:
+                messages.add_message(request, messages.WARNING, f"Member {member_to_remove.username} is not in the team.")
+        team.save()
+        return redirect('team_dashboard', id=id)

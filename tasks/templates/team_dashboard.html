@@ -22,7 +22,7 @@
                 <li>
                     <strong>Task 2:</strong> Description or status of Task 2
                     <p>Assigned to: Bia</p>
-                </li>
+                </li>   
                 <li>
                     <strong>Task 3:</strong> Description or status of Task 3
                     <p>Assigned to: Mayss</p>
@@ -33,6 +33,9 @@
 
     <!-- Additional Sections -->
     <!-- Here you can add more sections like 'Upcoming Events', 'Recent Achievements', etc. -->
+    <a href="{% url 'remove_members' id %}">
+        <button>Remove Members</button>
+      </a>
 
 </div>
 {% endblock %}
