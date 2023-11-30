@@ -116,6 +116,13 @@
 /*
  * forms
  */
+
+.form-control {
+  font-size: 1.5rem;
+  border-radius: 0.5rem;
+  border: 0.1rem solid #770b5c;
+}
+
 .nolabel label {
   display: none;
 }
@@ -245,12 +252,11 @@ main {
   margin-bottom: 5px; /* Add spacing between links */
 }
 
-/* #bg-content {
+ #bg-content {
   margin: 0;
   padding: 0;
-  background: url('/static/cat.jpg') center center/cover no-repeat;
+  background: url('/static/bg.jpeg') center center/cover no-repeat;
   height: 100vh; 
   display: flex;
   flex-direction: column;
-} */
-
+} 
