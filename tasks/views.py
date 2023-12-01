@@ -21,7 +21,7 @@ from .models import Task
 from django.views.decorators.http import require_POST
 from django.utils.dateparse import parse_date
 
-from tasks.forms import LogInForm, NewPasswordMixin, PasswordForm, EmailVerificationForm, UserForm, SignUpForm
+from tasks.forms import LogInForm, NewPasswordMixin, PasswordForm, EmailVerificationForm, UserForm, SignUpForm, InviteMemberForm
 from tasks.helpers import login_prohibited
 from .models import User
 
@@ -387,3 +387,38 @@ class RemoveMembersView(LoginRequiredMixin, View):
                 messages.add_message(request, messages.WARNING, f"Member {member_to_remove.username} is not in the team.")
         team.save()
         return redirect('team_dashboard', id=id)
+    
+class AddMembersView(LoginRequiredMixin, View):
+    def get(self, request):
+        """Display email_verify template."""
+
+        form = InviteMemberForm()
+        return render(self.request, 'add_members.html', {'form': form})
+    
+    def post(self, request):
+        form = InviteMemberForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, "We have sent you an email please check your inbox!")
+        else:
+            messages.add_message(request, messages.ERROR, "User not found please check your details again")
+
+        return render(self.request, 'add_members.html', {'form': form})
+    
+class JoinTeamView(LoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
+        token = kwargs.get('token')
+        user = self.validate_token(token)
+
+        if user:
+            return render(self.request,'join_team.html', {'token': token, 'form' : NewPasswordMixin()})
+        else:
+            messages.add_message(self.request, messages.ERROR, "User not found")
+            return redirect(self.get_fail_redirect_url())
+    
+    def validate_token(self, token):
+        try:
+            user = User.objects.filter(email_verification_token=uuid.UUID(str(token))).first()
+            return user
+        except:
+            return None
