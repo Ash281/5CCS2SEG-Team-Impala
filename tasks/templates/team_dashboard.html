@@ -1,34 +1,66 @@
 {% extends 'base_content.html' %}
 
 {% block main_content %}
-<div class="container">
+<div>
+
+    <div class="container-fluid m-0">
     <div class="row">
-        <div class="col-12">
-            <h1>Team Dashboard: {{team_name}}</h1>
-            <p><strong>Description (Bio):</strong> {{team_description}}</p>
-            <p><strong>Created At:</strong> {{created_at}}</p>
+        <div class="col-12 card long-card cover-text">
+            <h2 class="medium-font mb-2">Team Dashboard: {{team_name}}</h2>
+            <p>Description (Bio): {{team_description}}</p>
+            <p>Created At: {{created_at}}</p>
         </div>
     </div>
-
     <!-- Tasks and Assigned Members Section -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <h2>Current Tasks</h2>
-            <ul>
-                <li>
+    <div class="row">
+        <div class="col-md-12 col-lg-4 card task-card">
+            <h2 class="cover-text">IN PROGRESS</h2>
+            <ul class="list-unstyled">
+                <li class="task">
                     <strong>Task 1:</strong> Description or status of Task 1
                     <p>Assigned to: Ishika</p>
                 </li>
-                <li>
+                <li class="task">
                     <strong>Task 2:</strong> Description or status of Task 2
                     <p>Assigned to: Bia</p>
                 </li>
-                <li>
+            </ul>
+        </div>
+        <div class="col-md-12 col-lg-4 card task-card">
+            <h2 class="cover-text">DONE</h2>
+            <ul class="list-unstyled">
+                <li class="task">
+                    <strong>Task 1:</strong> Description or status of Task 1
+                    <p>Assigned to: Ishika</p>
+                </li>
+                <li class="task">
+                    <strong>Task 2:</strong> Description or status of Task 2
+                    <p>Assigned to: Bia</p>
+                </li>
+                <li class="task">
                     <strong>Task 3:</strong> Description or status of Task 3
                     <p>Assigned to: Mayss</p>
                 </li>
             </ul>
         </div>
+        <div class="col-md-12 col-lg-4 card task-card">
+            <h2 class="cover-text">TODO</h2>
+            <ul class="list-unstyled">
+                <li class="task">
+                    <strong>Task 1:</strong> Description or status of Task 1
+                    <p>Assigned to: Ishika</p>
+                </li>
+                <li class="task">
+                    <strong>Task 2:</strong> Description or status of Task 2
+                    <p>Assigned to: Bia</p>
+                </li>
+                <li class="task">
+                    <strong>Task 3:</strong> Description or status of Task 3
+                    <p>Assigned to: Mayss</p>
+                </li>
+            </ul>
+        </div>
+    </div>
     </div>
 
     <!-- Additional Sections -->

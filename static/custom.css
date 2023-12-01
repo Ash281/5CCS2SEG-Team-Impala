@@ -27,6 +27,7 @@
 .vcenter-item{
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 /*
@@ -36,6 +37,14 @@
  h1.cover-heading {
   font-family:"Londrina Solid", sans-serif;
   font-size: 7rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 0;
+}
+
+h2.medium-font{
+  font-family:"Londrina Solid", sans-serif;
   font-style: normal;
   font-weight: 400;
   line-height: 1.2;
@@ -72,6 +81,10 @@
   line-height: 1.2; 
 }
 
+.cover-text p{
+  font-size: 1.2rem;
+}
+
 .header {
   padding: 10px;
   text-align:  center;
@@ -80,18 +93,43 @@
   font-size: 10px;
 }
 
-.cover-card {
+.card {
   background: linear-gradient(144deg, #F36868 -10.96%, rgba(239, 209, 209, 0.00) 102.95%);
-  border:none;
-  min-height: 450px;
-  max-width: 30rem;
-  padding : 20px 20px;
+  border:2px;
+  margin: 0.5rem 1rem;
+  min-height:10rem;
+  padding : 20px 10px;
   border-radius: 2rem;
   align-items: center;
   justify-content: center;
+  text-align: center;
+}
+
+.task-card {
+  width: max-content;
+  justify-content: start;
+}
+
+.cover-card {
+  min-height: 25rem;
+  min-width: 25rem;
+}
+
+.long-card {
+  max-width: 95%;
 }
 .cover-card-block {
   opacity: 1
+}
+
+.task{
+  background-color: white;
+  display: fle;
+  border-radius: 1rem;
+  min-width: 10rem;
+  min-height: 4rem;
+  margin-bottom: 4px;
+  padding: 4px 6px;
 }
 
 /*
@@ -132,6 +170,7 @@
  */
 
 .form-control {
+  margin-top: 5px;
   font-size: 1.3rem;
   border-radius: 0.5rem;
   border: 0.1rem solid #770b5c;
@@ -256,7 +295,7 @@ h3.profile-title {
 
 /* Customize the links inside the collapsed content */
 .collapse a {
-  color: red; /* Dark text color for links */
+  color: rgb(0, 0, 0); /* Dark text color for links */
   display: block; /* Ensure links are block-level elements */
   padding: 5px 10px; /* Add padding for better appearance */
   text-decoration: none; /* Remove underline */

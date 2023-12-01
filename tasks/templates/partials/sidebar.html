@@ -7,10 +7,10 @@
   </div>
   <div>  
     <ul class="list-unstyled mt-5">
-      <li class="small-font" ><a href="#">Dashboard</a></li>
-      <li class="small-font" ><a href="#">My Tasks</a></li>
+      <li class="small-font" ><a href={% url 'dashboard' %}>Dashboard</a></li>
+      <li class="small-font" ><a href='#'>My Tasks</a></li>
       <li class="small-font" ><a href="#">Teams</a></li>
-      <li class="small-font" ><a href="#">Create Team</a></li>
+      <li class="small-font" ><a href={% url 'create_team' %}>Create Team</a></li>
     </ul>
   </div>
 </div>
