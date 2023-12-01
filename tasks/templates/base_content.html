@@ -3,17 +3,20 @@
   
   {% include 'partials/navbar.html' %}
   
-  {% if user.is_authenticated %}
   <div class="row">
-    <div class="col-md-2">
-      {% include 'partials/sidebar.html' %}
-    </div>
-  {% endif %}
-
-    <div>
-      {% block main_content %}{% endblock %}
+    {% if user.is_authenticated %}
+      <div class="col-md-2">
+        {% include 'partials/sidebar.html' %}
+      </div>
+      <div class="col-md-10">
+    {% else %}
+      <div class="col-md-12">
+    {% endif %}
+    {% block main_content %}{% endblock %}
     </div>
   </div>
+  
+
   
   {% include 'partials/messages.html' %}
 

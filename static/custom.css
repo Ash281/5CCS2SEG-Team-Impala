@@ -39,6 +39,20 @@
   font-style: normal;
   font-weight: 400;
   line-height: 1.2;
+  margin-bottom: 0;
+}
+
+.small-font {
+  font-family:"Londrina Solid", sans-serif;
+  font-size: 1.3rem;
+  font-style: normal;
+  font-weight: 400;
+  margin-top: 1rem;
+}
+
+.small-font a {
+  color: black;
+  text-decoration: none;
 }
 
 .bottom-archor {
@@ -118,7 +132,7 @@
  */
 
 .form-control {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   border-radius: 0.5rem;
   border: 0.1rem solid #770b5c;
 }
@@ -187,15 +201,12 @@ h3.profile-title {
 
 /* Sidebar */
 
-main {
-  height: 100vh;
-  height: -webkit-fill-available;
+.sidebar {
   max-height: 100vh;
   overflow-x: auto;
   overflow-y: hidden;
+  text-align: center;
 }
-
-.dropdown-toggle { outline: 0; }
 
 .btn-toggle {
   padding: .50rem .5rem;
@@ -203,6 +214,7 @@ main {
   color: var(--bs-emphasis-color);
   background-color: transparent;
 }
+
 .btn-toggle:hover,
 .btn-toggle:focus {
   color: rgba(var(--bs-emphasis-color-rgb), .85);
