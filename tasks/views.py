@@ -42,16 +42,17 @@ def home(request):
 
     return render(request, 'home.html')
 
-def create_task(request):
-    if request.method == 'POST':
-        form = CreateTaskForm(request.POST)
-        if form.is_valid():
-            form.save()
+# def create_task(request, id):
+#     team = get_object_or_404(Team, pk=id)
+#     if request.method == 'POST':
+#         form = CreateTaskForm(request.POST, id=team.id)
+#         if form.is_valid():
+#             form.save()
         
-    else:
-        form = CreateTaskForm()
+#     else:
+#         form = CreateTaskForm(id=team.id)
 
-    return render(request, 'create_task.html', {'form': form})
+#     return render(request, 'create_task.html', {'form': form})
 
 def task_list(request):
     sort_by = request.GET.get('sort_by', 'due_date')  
@@ -92,6 +93,11 @@ def task_list(request):
     
 
     return render(request, 'task_list.html', {'tasks': tasks, 'sort_by': sort_by, 'filter_by': filter_by})
+
+def my_teams(request):
+    teams = Team.objects.all()
+
+    return render(request, 'my_teams.html', {'teams': teams})
 
 def task_detail(request, task_title):
     task = get_object_or_404(Task, pk=task_title)
@@ -320,7 +326,7 @@ class CreateTeamView(LoginRequiredMixin, FormView):
         # print(self.object)
         # return super().form_valid(form)
 
-        team = form.save(commit=False)
+        team = form.save()
         team.save()
 
         team.members.add(self.request.user)
@@ -343,9 +349,84 @@ class TeamDashboardView(LoginRequiredMixin, View):
             'team_description': team.team_description,
             'members': team.members.all(),
             'created_at': team.created_at,
+            'id' : id
             # Add more context data here
         }
 
         # return reverse('team_dashboard')
         return render(request, 'team_dashboard.html', context)
     
+
+# class CreateTaskView(LoginRequiredMixin, View):
+#     """Display the dashboard for a specific team."""
+
+#     def get(self, request, id):
+#         # Retrieve the team by id, or show a 404 error if not found
+#         team = get_object_or_404(Team, id=id)
+
+#         # You can add more context data as needed
+#         context = {
+#             'team_name': team.team_name,
+#             'team_description': team.team_description,
+#             'members': team.members.all(),
+#             'created_at': team.created_at,
+#             'id': id
+#             # Add more context data here
+#         }
+#         if request.method == 'POST':
+#             form = CreateTaskForm(request.POST, id=id)
+#             if form.is_valid():
+#                 form.save()
+            
+#         else:
+#             form = CreateTaskForm(id=id)
+
+#         return render(request, 'create_task.html', context)
+    
+class CreateTaskView(LoginRequiredMixin, View):
+    """Display the dashboard for a specific team."""
+
+    def get(self, request, id):
+        # Retrieve the team by id, or show a 404 error if not found
+        team = get_object_or_404(Team, id=id)
+
+        # Initialize the form with team_id
+        form = CreateTaskForm(team_id=id)  # Change here
+
+        # Prepare the context data
+        context = {
+            'form': form,  # Include the form in the context
+            'team_name': team.team_name,
+            'team_description': team.team_description,
+            'members': team.members.all(),
+            'created_at': team.created_at,
+            'id': id
+        }
+
+        return render(request, 'create_task.html', context)
+
+    def post(self, request, id):
+        # Retrieve the team by id, or show a 404 error if not found
+        team = get_object_or_404(Team, id=id)
+
+        # Initialize the form with POST data and team_id
+        form = CreateTaskForm(request.POST, team_id=id)  # Change here
+
+        if form.is_valid():
+            # Save the form and do any other necessary logic
+            form.save()
+
+            # Redirect or render as necessary
+            # return redirect('some-view')
+
+        # If the form is not valid, render the page with the form errors
+        context = {
+            'form': form,
+            'team_name': team.team_name,
+            'team_description': team.team_description,
+            'members': team.members.all(),
+            'created_at': team.created_at,
+            'id': id
+        }
+
+        return render(request, 'create_task.html', context)

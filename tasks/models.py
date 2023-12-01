@@ -104,13 +104,15 @@ class Task(models.Model):
     task_title = models.CharField(max_length = 50, default='', blank=False, unique=True, validators=[MinLengthValidator(3, message="Title must be a minimum of 3 characters")])
     task_description = models.CharField(max_length = 500, default='', blank=False,  validators=[MinLengthValidator(10, message="Description must be a minimum of 10 characters")])
     due_date = models.DateField(default=datetime.date.today, validators=[validate_not_past_date])
-    assignees = models.CharField(max_length = 50, default='')
+    # assignees = models.CharField(max_length = 50, default='')
     priority = models.CharField(max_length=2, choices=PRIORITY_CHOICES, default='LW')
-    # assignees = forms.ModelMultipleChoiceField(
+    # assignees = models.ModelMultipleChoiceField(
     #     queryset=TeamMember.objects.all(),
-    #     widget=forms.CheckboxSelectMultiple(),  # Optional: For checkbox style selection
     #     required=False
     # )
+    assignees = models.ManyToManyField(User, blank=True, related_name='assigned_tasks')
+    hours_spent = models.CharField(max_length = 500, default='', blank=False)
+
     STATUS_CHOICES = [('NOT_STARTED', 'Not Completed'), ('COMPLETED', 'Completed') ]
     status = models.CharField(max_length=20,choices=STATUS_CHOICES,default='NOT_STARTED')
     def __str__(self):

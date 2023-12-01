@@ -188,6 +188,16 @@ class CreateTeamForm(forms.ModelForm):
         return team
 
 class CreateTaskForm(forms.ModelForm):
+    
+    def __init__(self, *args, **kwargs):
+        team_id = kwargs.pop('team_id', None)
+        super(CreateTaskForm, self).__init__(*args, **kwargs)
+
+        if team_id:
+            self.fields['assignees'].queryset = User.objects.filter(teams__id=team_id)
+        else:
+            self.fields['assignees'].queryset = User.objects.none()
+
     class Meta:
         model = Task
         fields = ['task_title', 'task_description', 'due_date', 'assignees', 'priority']
@@ -198,5 +208,5 @@ class CreateTaskForm(forms.ModelForm):
             'assignees': 'Assign to', 
             'priority': 'Priority'
         }
-        widgets = { 'task_description': forms.Textarea(), 'due_date': forms.DateInput(attrs={'type': 'date'}) }
+        widgets = { 'task_description': forms.Textarea(), 'due_date': forms.DateInput(attrs={'type': 'date'}), 'assignees': forms.CheckboxSelectMultiple() }
    

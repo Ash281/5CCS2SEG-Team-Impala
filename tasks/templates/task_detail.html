@@ -1,5 +1,6 @@
-<!DOCTYPE html>
-<html>
+{% extends 'base_content.html' %}
+
+{% block main_content %}
 <head>
     <title>Task Details</title>
 </head>
@@ -7,15 +8,20 @@
     <h1>Task Details</h1>
 
     <div>
-        <h2>{{ task.task_title }}</h2>
+        <h2 style="color: #FF0000;"></h2style><strong>{{ task.task_title }}</strong></h2>
         <p><strong>Description:</strong> {{ task.task_description }}</p>
         <p><strong>Due Date:</strong> {{ task.due_date }}</p>
         <p><strong>Priority:</strong> {{ task.get_priority_display }}</p>
         <p><strong>Status:</strong> {{ task.status }}</p>
+        <p><strong>Hours spent:</strong> {{ task.hours_spent }}</p>
 
-        <a href="{% url 'edit_task' task.task_title %}">Edit this Task</a>
+    <p>
+        <a href="{% url 'edit_task' task.task_title %}" class="btn btn-lg btn-secondary">Edit this Task</a>
+    </p>
     </div>
-
-    <a href="{% url 'task_list' %}">Back to Task List</a>
+    <p>
+        <a href="{% url 'task_list' %}" class="btn btn-lg btn-secondary">Back to Task List</a>
+    </p>
 </body>
 </html>
+{% endblock %}

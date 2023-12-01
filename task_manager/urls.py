@@ -35,11 +35,13 @@ urlpatterns = [
 
     path('email_verify/', views.EmailVerification.as_view(), name='email_verify'),
 
-    path('create_task/', views.create_task, name='create_task'),
+    path('create_task/<int:id>/', views.CreateTaskView.as_view(), name='create_task'),
     path('task_list/', views.task_list, name='task_list'),
 
     path('tasks/<str:task_title>/', views.task_detail, name='task_detail'),
     path('tasks/edit/<str:task_title>/', views.edit_task, name='edit_task'),
     path('tasks/complete/<str:task_title>/', views.mark_task_complete, name='mark_task_complete'),
+
+    path('my_teams/', views.my_teams, name='my_teams'),
 
 ]

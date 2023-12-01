@@ -28,7 +28,10 @@
     <p>No current tasks</p>
   {% endfor %}
     <p>
-      <a href='{% url 'create_task' %}' class="btn btn-lg btn-secondary">create task</a>
+      <a href="{% url 'task_list' %}" class="btn btn-lg btn-secondary">My tasks</a>
+    </p>
+    <p>
+      <a href="{% url 'my_teams' %}" class="btn btn-lg btn-secondary">My teams</a>
     </p>
     <p>
       <a href='{% url 'create_team' %}' class="btn btn-lg btn-secondary">create team</a>
