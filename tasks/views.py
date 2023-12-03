@@ -32,8 +32,10 @@ def dashboard(request):
     current_user = request.user
     first_three = Task.objects.order_by('due_date')[:3]
     next_three = Task.objects.order_by('due_date')[3:6]
+    user_teams = current_user.teams.all()
 
-    return render(request, 'dashboard.html', {'user': current_user, 'first_three': first_three, 'next_three': next_three})
+
+    return render(request, 'dashboard.html', {'user': current_user, 'first_three': first_three, 'next_three': next_three, 'user_teams': user_teams})
 
 
 @login_prohibited
