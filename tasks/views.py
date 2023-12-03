@@ -400,7 +400,7 @@ class AddMembersView(LoginRequiredMixin, View):
             print(team_id)
             messages.add_message(request, messages.SUCCESS, "Invitation sent successfully!")
         else:
-            messages.add_message(request, messages.ERROR, "User not found. Please check your details again.")
+            messages.add_message(request, messages.ERROR, "This user is either already in the team or does not exist!")
 
         return render(self.request, 'add_members.html', {'form': form, 'team_id': team_id})
     

@@ -74,11 +74,20 @@ class InviteMemberForm(forms.Form):
 
     def clean(self):
         super().clean()
+
+        username = self.cleaned_data.get("username")
+        team_id = self.cleaned_data.get("team_id")
+
         try:
-            self.username = self.cleaned_data.get("username")
-            user = User.objects.get(username=self.username)
+            user = User.objects.get(username=username)
+            team = Team.objects.get(id=team_id)
+
+            # Check if the user is already in the team
+            if user in team.members.all():
+                self.add_error('username', 'User is already in the team!')
         except User.DoesNotExist:
             self.add_error('username', 'User not found!')
+
         return self.cleaned_data
     
     def save(self):
