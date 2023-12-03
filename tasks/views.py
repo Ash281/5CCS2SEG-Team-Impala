@@ -389,31 +389,36 @@ class RemoveMembersView(LoginRequiredMixin, View):
         return redirect('team_dashboard', id=id)
     
 class AddMembersView(LoginRequiredMixin, View):
-    def get(self, request):
-        """Display email_verify template."""
+    def get(self, request, team_id):
+        form = InviteMemberForm(initial={'team_id': team_id})
+        return render(self.request, 'add_members.html', {'form': form, 'team_id': team_id})
 
-        form = InviteMemberForm()
-        return render(self.request, 'add_members.html', {'form': form})
-    
-    def post(self, request):
+    def post(self, request, team_id):
         form = InviteMemberForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.add_message(request, messages.SUCCESS, "We have sent you an email please check your inbox!")
+            print(team_id)
+            messages.add_message(request, messages.SUCCESS, "Invitation sent successfully!")
         else:
-            messages.add_message(request, messages.ERROR, "User not found please check your details again")
+            messages.add_message(request, messages.ERROR, "User not found. Please check your details again.")
 
-        return render(self.request, 'add_members.html', {'form': form})
+        return render(self.request, 'add_members.html', {'form': form, 'team_id': team_id})
     
-class JoinTeamView(LoginRequiredMixin, View):
+class JoinTeamView(View):
     def get(self, *args, **kwargs):
         token = kwargs.get('token')
+        team_id = self.request.GET.get('team_id')  # Extract team_id from URL parameters
         user = self.validate_token(token)
 
-        if user:
-            return render(self.request,'join_team.html', {'token': token, 'form' : NewPasswordMixin()})
+        if user and team_id:
+            # Add the user to the team
+            team = Team.objects.get(id=team_id)
+            team.members.add(user)
+
+            messages.add_message(self.request, messages.SUCCESS, "You've successfully joined the team!")
+            return redirect('team_dashboard', id=team_id)
         else:
-            messages.add_message(self.request, messages.ERROR, "User not found")
+            messages.add_message(self.request, messages.ERROR, "Invalid or expired invitation")
             return redirect(self.get_fail_redirect_url())
     
     def validate_token(self, token):
