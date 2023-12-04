@@ -110,6 +110,11 @@ h2.medium-font{
   justify-content: start;
 }
 
+.scrollable-list {
+  height: 50rem;
+  overflow-y: scroll;
+}
+
 .cover-card {
   min-height: 25rem;
   min-width: 25rem;
@@ -123,8 +128,8 @@ h2.medium-font{
 }
 
 .task{
-  background-color: white;
-  display: fle;
+  background-color: black;
+  display: flex;
   border-radius: 1rem;
   min-width: 10rem;
   min-height: 4rem;
