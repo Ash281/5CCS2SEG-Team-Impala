@@ -119,9 +119,13 @@ def edit_task(request, task_title):
 @require_POST
 def mark_task_complete(request, task_title):
     task = get_object_or_404(Task, task_title=task_title)
+    days = int(request.POST.get('days', 0))
+    hours_per_day = int(request.POST.get('hours', 0))
+    total_hours_spent = days * hours_per_day
     task.status = 'COMPLETED'
+    task.hours_spent = total_hours_spent
     task.save()
-    return redirect('task_list') 
+    return render(request, 'task_detail.html', {'task': task})
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
@@ -349,14 +353,15 @@ class TeamDashboardView(LoginRequiredMixin, View):
             'team_description': team.team_description,
             'members': team.members.all(),
             'created_at': team.created_at,
-            'id' : id
+            'id': id
             # Add more context data here
         }
 
         # return reverse('team_dashboard')
+        
+        print(f"All teams: {id}")
         return render(request, 'team_dashboard.html', context)
     
-
 # class CreateTaskView(LoginRequiredMixin, View):
 #     """Display the dashboard for a specific team."""
 
@@ -430,3 +435,39 @@ class CreateTaskView(LoginRequiredMixin, View):
         }
 
         return render(request, 'create_task.html', context)
+
+class RemoveMembersView(LoginRequiredMixin, View):
+    """View to display a page for removing members from a team."""
+
+    template_name = 'remove_member.html'  # Create a new template for this view
+
+    def get(self, request, id):
+        team = get_object_or_404(Team, id=id)
+
+        # Ensure that the logged-in user is the owner of the team
+        # if request.user != team.owner:
+        #     messages.add_message(request, messages.WARNING, "You do not have permission to remove members.")
+        #     return redirect('team_dashboard', id=team.id)
+
+        context = {'team': team}
+        return render(request, self.template_name, context)
+
+    def post(self, request, id):
+        team = get_object_or_404(Team, id=id)
+
+        # Ensure that the logged-in user is the owner of the team
+        # if request.user != team.owner:
+        #     messages.add_message(request, messages.WARNING, "You do not have permission to remove members.")
+        #     return redirect('team_dashboard', id=team.id)
+
+        members_to_remove_ids = request.POST.getlist('members_to_remove')
+
+        for member_id in members_to_remove_ids:
+            member_to_remove = get_object_or_404(User, id=member_id)
+            if member_to_remove in team.members.all():
+                team.members.remove(member_to_remove)
+                messages.add_message(request, messages.SUCCESS, f"Member {member_to_remove.username} removed successfully.")
+            else:
+                messages.add_message(request, messages.WARNING, f"Member {member_to_remove.username} is not in the team.")
+        team.save()
+        return redirect('team_dashboard', id=id)

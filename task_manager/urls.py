@@ -32,7 +32,7 @@ urlpatterns = [
     path('create_team/', views.CreateTeamView.as_view(), name='create_team'),
     # path('team/<int:id>/dashboard/', views.TeamDashboardView.as_view(), name='team_dashboard'),
     path('team/<int:id>/', views.TeamDashboardView.as_view(), name='team_dashboard'),
-
+    path('remove_members/<int:id>/', views.RemoveMembersView.as_view(), name='remove_members'),
     path('email_verify/', views.EmailVerification.as_view(), name='email_verify'),
 
     path('create_task/<int:id>/', views.CreateTaskView.as_view(), name='create_task'),

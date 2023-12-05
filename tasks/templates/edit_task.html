@@ -8,9 +8,9 @@
     <p><input type="submit" value="Save Changes" class="btn btn-lg btn-secondary"> </p>
   </form>
   
-  <form action="{% url 'mark_task_complete' task.task_title %}" method="post" >
+  <!-- <form action="{% url 'mark_task_complete' task.task_title %}" method="post" >
     {% csrf_token %}
     <p><input type="submit" value="Mark as Complete" class="btn btn-lg btn-secondary"></p>
-  </form>
+  </form> -->
 
 {% endblock %}
