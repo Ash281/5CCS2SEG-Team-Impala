@@ -1,5 +1,6 @@
-<!DOCTYPE html>
-<html>
+{% extends 'base_content.html' %}
+
+{% block main_content %}
 <head>
     <title>Task Details</title>
 </head>
@@ -7,15 +8,50 @@
     <h1>Task Details</h1>
 
     <div>
-        <h2>{{ task.task_title }}</h2>
+        <h2 style="color: #FF0000;"></h2style><strong>{{ task.task_title }}</strong></h2>
         <p><strong>Description:</strong> {{ task.task_description }}</p>
         <p><strong>Due Date:</strong> {{ task.due_date }}</p>
         <p><strong>Priority:</strong> {{ task.get_priority_display }}</p>
-        <p><strong>Status:</strong> {{ task.status }}</p>
+        <p><strong>Hours spent:</strong> {{ task.hours_spent }}</p>
+        <p><strong>Status:</strong> {{ task.get_status_display }}</p>
 
-        <a href="{% url 'edit_task' task.task_title %}">Edit this Task</a>
+        <!-- <form action="{% url 'mark_task_complete' task.task_title %}" method="post" >
+            {% csrf_token %}
+            <p><input type="submit" value="Mark as Complete" class="btn btn-lg btn-secondary" ></p>
+          </form> -->
+
+    <form action="{% url 'mark_task_complete' task.task_title %}" method="post" onsubmit="return getTaskDetails()">
+        {% csrf_token %}
+        <input type="hidden" name="days" id="days">
+        <input type="hidden" name="hours" id="hours">
+        <p><input type="submit" value="Mark as Complete" class="btn btn-lg btn-secondary"></p>
+    </form>
+
+    <script>
+        function getTaskDetails() {
+            var days = prompt("Please state how many days you spent working on this task:");
+            var hours = prompt("Please state how many hours you spent on this task per day:\n0 --- 24 hours", "0");
+
+            if (days.trim() !== "" && hours.trim() !== "") {
+                document.getElementById('days').value = days;
+                document.getElementById('hours').value = hours;
+                return true;
+
+            } else {
+                alert("You must enter both the number of days and hours.");
+                return false;
+            }
+        }
+    </script>
+    
+    <p>
+        <a href="{% url 'edit_task' task.task_title %}" class="btn btn-lg btn-secondary">Edit this Task</a>
+    </p>
     </div>
-
-    <a href="{% url 'task_list' %}">Back to Task List</a>
+    <p>
+        <a href="{% url 'task_list' %}" class="btn btn-lg btn-secondary">Back to Task List</a>
+    </p>
+    
 </body>
 </html>
+{% endblock %}

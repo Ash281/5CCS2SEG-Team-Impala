@@ -1,10 +1,16 @@
+{% extends 'base_content.html' %}
+
+{% block main_content %}
+
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Save Changes">
+    {% include 'partials/bootstrap_form.html' with form=form %}
+    <p><input type="submit" value="Save Changes" class="btn btn-lg btn-secondary"> </p>
   </form>
   
-  <form action="{% url 'mark_task_complete' task.task_title %}" method="post">
+  <!-- <form action="{% url 'mark_task_complete' task.task_title %}" method="post" >
     {% csrf_token %}
-    <input type="submit" value="Mark as Complete" class="btn btn-lg btn-secondary">
-  </form>
+    <p><input type="submit" value="Mark as Complete" class="btn btn-lg btn-secondary"></p>
+  </form> -->
+
+{% endblock %}

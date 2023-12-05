@@ -1,0 +1,35 @@
+{% extends 'base_content.html' %}
+{% block main_content %}
+{% load static %}
+
+<html>
+<head>
+  <link rel="stylesheet" href="{% static 'taskstyle.css' %}">
+</head>
+  <body>
+    <h1 id="example-text">{{ user.username }}'s teams</h1> 
+   
+</script>
+  <table>
+      <tr>
+          <th>Team name</th>
+          <th>Team description</th>
+          <th>Members</th>
+          <th>Created at</th>
+      </tr>
+      {% for team in teams %}
+      <tr>
+          <td>{{ team.team_name }}</td>
+          <td>{{ team.team_description }}</td>
+          <td>{{ team.members }}</td>
+          <td>{{ team.created_at }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3">You are not registered in any team.</td></tr>
+      {% endfor %}
+  </table>
+  
+
+  </body>
+</html>
+{% endblock %}

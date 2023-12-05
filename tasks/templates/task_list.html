@@ -29,7 +29,6 @@
       <option value="date_range">Date Range</option>
   </select>
 
-    <!-- Hidden date range inputs -->
     <div id="dateRange" style="display: none;">
       <label for="start_date">Start Date:</label>
       <input type="date" id="start_date" name="start_date">
@@ -38,9 +37,9 @@
       <input type="date" id="end_date" name="end_date">
   </div>
 
-  <button type="submit">Filter</button>
+  <button type="submit" class="btn btn-lg btn-secondary">Filter</button>
   <input type="text" name="search" placeholder="Search by task title" value="{{ request.GET.search }}">
-    <button type="submit">Search</button>
+    <button type="submit" class="btn btn-lg btn-secondary">Search</button>
 </form>
 
 <script>

@@ -42,16 +42,17 @@ def home(request):
 
     return render(request, 'home.html')
 
-def create_task(request):
-    if request.method == 'POST':
-        form = CreateTaskForm(request.POST)
-        if form.is_valid():
-            form.save()
+# def create_task(request, id):
+#     team = get_object_or_404(Team, pk=id)
+#     if request.method == 'POST':
+#         form = CreateTaskForm(request.POST, id=team.id)
+#         if form.is_valid():
+#             form.save()
         
-    else:
-        form = CreateTaskForm()
+#     else:
+#         form = CreateTaskForm(id=team.id)
 
-    return render(request, 'create_task.html', {'form': form})
+#     return render(request, 'create_task.html', {'form': form})
 
 def task_list(request):
     sort_by = request.GET.get('sort_by', 'due_date')  
@@ -93,6 +94,11 @@ def task_list(request):
 
     return render(request, 'task_list.html', {'tasks': tasks, 'sort_by': sort_by, 'filter_by': filter_by})
 
+def my_teams(request):
+    teams = Team.objects.all()
+
+    return render(request, 'my_teams.html', {'teams': teams})
+
 def task_detail(request, task_title):
     task = get_object_or_404(Task, pk=task_title)
     return render(request, 'task_detail.html', {'task': task})
@@ -113,9 +119,13 @@ def edit_task(request, task_title):
 @require_POST
 def mark_task_complete(request, task_title):
     task = get_object_or_404(Task, task_title=task_title)
+    days = int(request.POST.get('days', 0))
+    hours_per_day = int(request.POST.get('hours', 0))
+    total_hours_spent = days * hours_per_day
     task.status = 'COMPLETED'
+    task.hours_spent = total_hours_spent
     task.save()
-    return redirect('task_list') 
+    return render(request, 'task_detail.html', {'task': task})
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
@@ -320,7 +330,7 @@ class CreateTeamView(LoginRequiredMixin, FormView):
         # print(self.object)
         # return super().form_valid(form)
 
-        team = form.save(commit=False)
+        team = form.save()
         team.save()
 
         team.members.add(self.request.user)
@@ -343,9 +353,121 @@ class TeamDashboardView(LoginRequiredMixin, View):
             'team_description': team.team_description,
             'members': team.members.all(),
             'created_at': team.created_at,
+            'id': id
             # Add more context data here
         }
 
         # return reverse('team_dashboard')
+        
+        print(f"All teams: {id}")
         return render(request, 'team_dashboard.html', context)
     
+# class CreateTaskView(LoginRequiredMixin, View):
+#     """Display the dashboard for a specific team."""
+
+#     def get(self, request, id):
+#         # Retrieve the team by id, or show a 404 error if not found
+#         team = get_object_or_404(Team, id=id)
+
+#         # You can add more context data as needed
+#         context = {
+#             'team_name': team.team_name,
+#             'team_description': team.team_description,
+#             'members': team.members.all(),
+#             'created_at': team.created_at,
+#             'id': id
+#             # Add more context data here
+#         }
+#         if request.method == 'POST':
+#             form = CreateTaskForm(request.POST, id=id)
+#             if form.is_valid():
+#                 form.save()
+            
+#         else:
+#             form = CreateTaskForm(id=id)
+
+#         return render(request, 'create_task.html', context)
+    
+class CreateTaskView(LoginRequiredMixin, View):
+    """Display the dashboard for a specific team."""
+
+    def get(self, request, id):
+        # Retrieve the team by id, or show a 404 error if not found
+        team = get_object_or_404(Team, id=id)
+
+        # Initialize the form with team_id
+        form = CreateTaskForm(team_id=id)  # Change here
+
+        # Prepare the context data
+        context = {
+            'form': form,  # Include the form in the context
+            'team_name': team.team_name,
+            'team_description': team.team_description,
+            'members': team.members.all(),
+            'created_at': team.created_at,
+            'id': id
+        }
+
+        return render(request, 'create_task.html', context)
+
+    def post(self, request, id):
+        # Retrieve the team by id, or show a 404 error if not found
+        team = get_object_or_404(Team, id=id)
+
+        # Initialize the form with POST data and team_id
+        form = CreateTaskForm(request.POST, team_id=id)  # Change here
+
+        if form.is_valid():
+            # Save the form and do any other necessary logic
+            form.save()
+
+            # Redirect or render as necessary
+            # return redirect('some-view')
+
+        # If the form is not valid, render the page with the form errors
+        context = {
+            'form': form,
+            'team_name': team.team_name,
+            'team_description': team.team_description,
+            'members': team.members.all(),
+            'created_at': team.created_at,
+            'id': id
+        }
+
+        return render(request, 'create_task.html', context)
+
+class RemoveMembersView(LoginRequiredMixin, View):
+    """View to display a page for removing members from a team."""
+
+    template_name = 'remove_member.html'  # Create a new template for this view
+
+    def get(self, request, id):
+        team = get_object_or_404(Team, id=id)
+
+        # Ensure that the logged-in user is the owner of the team
+        # if request.user != team.owner:
+        #     messages.add_message(request, messages.WARNING, "You do not have permission to remove members.")
+        #     return redirect('team_dashboard', id=team.id)
+
+        context = {'team': team}
+        return render(request, self.template_name, context)
+
+    def post(self, request, id):
+        team = get_object_or_404(Team, id=id)
+
+        # Ensure that the logged-in user is the owner of the team
+        # if request.user != team.owner:
+        #     messages.add_message(request, messages.WARNING, "You do not have permission to remove members.")
+        #     return redirect('team_dashboard', id=team.id)
+
+        members_to_remove_ids = request.POST.getlist('members_to_remove')
+
+        for member_id in members_to_remove_ids:
+            member_to_remove = get_object_or_404(User, id=member_id)
+            if member_to_remove in team.members.all():
+                team.members.remove(member_to_remove)
+                messages.add_message(request, messages.SUCCESS, f"Member {member_to_remove.username} removed successfully.")
+            else:
+                messages.add_message(request, messages.WARNING, f"Member {member_to_remove.username} is not in the team.")
+        team.save()
+        return redirect('team_dashboard', id=id)
