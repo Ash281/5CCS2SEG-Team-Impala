@@ -30,6 +30,12 @@
     justify-content: center;
 }
 
+.custom-form{
+  display:flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
 /*
  * Cover page
  */
@@ -81,7 +87,7 @@ h2.medium-font{
   line-height: 1.2; 
 }
 
-.cover-text p{
+.cover-text p {
   font-size: 1.2rem;
 }
 
@@ -95,41 +101,45 @@ h2.medium-font{
 
 .card {
   background: linear-gradient(144deg, #F36868 -10.96%, rgba(239, 209, 209, 0.00) 102.95%);
-  border:2px;
-  margin: 0.5rem 1rem;
+  margin-top: 8px;
+  margin-left: 5px;
   min-height:10rem;
   padding : 20px 10px;
   border-radius: 2rem;
   align-items: center;
   justify-content: center;
   text-align: center;
+  display: flex;
 }
 
 .task-card {
-  width: max-content;
-  justify-content: start;
+  width: 100%;
+  justify-content: flex-start;
 }
 
 .scrollable-list {
-  height: 50rem;
+  height: 75vh;
   overflow-y: scroll;
+  display: flex;
+  scrollbar-width: thin;
 }
 
 .cover-card {
   min-height: 25rem;
   min-width: 25rem;
+  margin: 5px;
 }
 
 .long-card {
   max-width: 95%;
+  margin: 5px;
 }
 .cover-card-block {
   opacity: 1
 }
 
 .task{
-  background-color: black;
-  display: flex;
+  background-color: white;
   border-radius: 1rem;
   min-width: 10rem;
   min-height: 4rem;

@@ -1,40 +1,89 @@
 {% extends 'base_content.html' %}
-
 {% block main_content %}
-<div>
 
-    <div class="container-fluid m-0">
-    <div class="row">
-        <div class="col-12 card long-card cover-text">
-            <h2 class="medium-font mb-2">Team Dashboard: {{team_name}}</h2>
-            <p>Description (Bio): {{team_description}} Created At: {{created_at}}</p>
-        </div>
+<div>
+    <script>
+        function showDateRange(value) {
+          var dateRangeDiv = document.getElementById('dateRange');
+          if (value === 'date_range') {
+              dateRangeDiv.style.display = 'block';
+          } else {
+              dateRangeDiv.style.display = 'none';
+          }
+        }
+    </script>
+
+    <div class="col-12 text-center cover-text">
+        <h2 class="medium-font mb-2">Team Dashboard: {{team_name}}</h2>
+        <!--  <p>Description (Bio): {{team_description}} Created At: {{created_at}}</p>  -->
+        <a href='{% url 'create_task' %}' class="btn mt-2">
+            Create Task
+        </a>
+
+        <form method="get">
+            <label for="sort_by">Sort by:</label>
+            <select name="sort_by" id="sort_by" onchange="this.form.submit()">
+                <option value="due_date" {% if sort_by == "due_date" %}selected{% endif %}>Due Date</option>
+                <option value="priority" {% if sort_by == "priority" %}selected{% endif %}>Priority</option>
+                <option value="status" {% if sort_by == "status" %}selected{% endif %}>Status</option>
+                <option value="task_title" {% if sort_by == "task_title" %}selected{% endif %}>Title</option>
+            </select>
+        </form>
+        
+        <form method="get">
+            <label for="filter_by">Filter by:</label>
+            <select name="filter_by" id="filter_by" onchange="showDateRange(this.value)">
+                <option value="">--Select Filter--</option>
+                <option value="high_priority" {% if filter_by == "high_priority" %}selected{% endif %}>High Priority</option>
+                <option value="med_priority" {% if filter_by == "med_priority" %}selected{% endif %}>Medium Priority</option>
+                <option value="low_priority" {% if filter_by == "low_priority" %}selected{% endif %}>Low Priority</option>
+                <option value="comp_status" {% if filter_by == "comp_status" %}selected{% endif %}>Complete</option>
+                <option value="incomp_status" {% if filter_by == "incomp_status" %}selected{% endif %}>Incomplete</option>
+                <option value="date_range">Date Range</option>
+            </select>
+        
+            <!-- Hidden date range inputs -->
+            <div id="dateRange" style="display: none;">
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date">
+        
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date">
+            </div>
+        
+            <button type="submit">Filter</button>
+            <input type="text" name="search" placeholder="Search by task title" value="{{ request.GET.search }}">
+            <button type="submit">Search</button>
+        </form>
+
     </div>
 
-    <!-- Tasks and Assigned Members Section -->
+    <!-- Tasks and Assigned Members Section  -->
+    <div class="container">
     <div class="row">
-        <div class="col-md-12 col-lg-4 card task-card scrollable-list">
+        <div class="col-sm-12 col-lg-4">
+            <div class=" card task-card scrollable-list">
             <h2 class="cover-text">IN PROGRESS</h2>
             <ul class="list-unstyled">
-                <li class="task">
-                    <strong>Task 1:</strong> Description or status of Task 1
-                    <p>Assigned to: Ishika</p>
+                {% for task in tasks %}
+                <li>
+
+                    <p class="clickable-cell"><a href="{% url 'task_detail' task.id %}">{{ task.task_title }}</a></p>
+                    <p>{{ task.task_description }}</p>
+                    <p>{{ task.due_date }}</p>
+                    <p>{{ task.assignees }}</p>
+                    <p>{{ task.get_priority_display }}</p>
+                    <p>{{ task.get_status_display }}</p>
+                    
                 </li>
-                <li class="task">
-                    <strong>Task 2:</strong> Description or status of Task 2
-                    <p>Assigned to: Bia</p>
-                </li>
-                <li class="task">
-                    <strong>Task 1:</strong> Description or status of Task 1
-                    <p>Assigned to: Ishika</p>
-                </li>
-                <li class="task">
-                    <strong>Task 2:</strong> Description or status of Task 2
-                    <p>Assigned to: Bia</p>
-                </li>
+                {% empty %}
+                <p colspan="3">No tasks available.</p>
+                {% endfor %}
             </ul>
+            </div>
         </div>
-        <div class="col-md-12 col-lg-4 card task-card">
+        <div class="col-sm-12 col-lg-4">
+        <div class="card task-card">
             <h2 class="cover-text">DONE</h2>
             <ul class="list-unstyled">
                 <li class="task">
@@ -51,7 +100,9 @@
                 </li>
             </ul>
         </div>
-        <div class="col-md-12 col-lg-4 card task-card">
+        </div>
+        <div class="col-sm-12 col-lg-4">
+        <div class="card task-card">
             <h2 class="cover-text">TODO</h2>
             <ul class="list-unstyled">
                 <li class="task">
@@ -67,6 +118,7 @@
                     <p>Assigned to: Mayss</p>
                 </li>
             </ul>
+        </div>
         </div>
     </div>
     </div>

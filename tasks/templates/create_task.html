@@ -3,20 +3,15 @@
 {% load static %}
 
 <html>
-<head>
-  <title>Create tasks here</title>
-</head>
-  <link rel="stylesheet" href="{% static 'taskstyle.css' %}"> 
-  <body>
-    <h1 id="example-text">Here you can create tasks...</h1>
-    <p id="example-text">Please write your task title and description below</p>
-    <form action="{% url 'create_task' %}" method = "post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <input type="submit" value="Create task" class="submit-button">
-      <a href="{% url 'task_list' %}" class="submit-button">Display tasks</a>
-
-    </form>
-    </body>
+  <h1 class="text-center">New Task</h1>
+  <div class="card cover-card">
+  <form action="{% url 'create_task' %}" method = "post">
+    {% csrf_token %}
+    {% include 'partials/bootstrap_form.html' with form=form  %}
+    <input type="submit" value="Create task" class="btn mt-2">      
+            
+  </form>
+  <a href="{% url 'task_list' %}" class="btn mt-2">Display tasks</a>
+  <div>
 </html>
 {% endblock %}
