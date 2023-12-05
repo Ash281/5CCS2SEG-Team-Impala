@@ -180,8 +180,6 @@ class CreateTeamForm(forms.ModelForm):
         """Create a new team."""
 
         team = super().save(commit=False)
-        if user:
-            team.members.add(user)
         if commit:
             team.save()
             self.save_m2m()  
@@ -209,4 +207,3 @@ class CreateTaskForm(forms.ModelForm):
             'priority': 'Priority'
         }
         widgets = { 'task_description': forms.Textarea(), 'due_date': forms.DateInput(attrs={'type': 'date'}), 'assignees': forms.CheckboxSelectMultiple() }
-   

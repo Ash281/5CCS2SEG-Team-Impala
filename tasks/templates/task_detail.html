@@ -7,25 +7,47 @@
 <body>
     <h1>Task Details</h1>
 
-    <div>
-        <h2 style="color: #FF0000;"></h2style><strong>{{ task.task_title }}</strong></h2>
-        <p><strong>Description:</strong> {{ task.task_description }}</p>
-        <p><strong>Due Date:</strong> {{ task.due_date }}</p>
-        <p><strong>Priority:</strong> {{ task.get_priority_display }}</p>
-        <p><strong>Hours spent:</strong> {{ task.hours_spent }}</p>
-        <p><strong>Status:</strong> {{ task.get_status_display }}</p>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <h2>{{ task.task_title }}</h2>
+                    <div class="task">
+                    <p><strong>Description:</strong> {{ task.task_description }}</p>
+                    <p><strong>Due Date:</strong> {{ task.due_date }}</p>
+                    <p><strong>Priority:</strong> {{ task.get_priority_display }}</p>
+                    <p><strong>Hours spent:</strong> {{ task.hours_spent }}</p>
+                    <p><strong>Status:</strong> {{ task.get_status_display }}</p>
+                    </div>
+                    <!-- <form action="{% url 'mark_task_complete' task.task_title %}" method="post" >
+                        {% csrf_token %}
+                        <p><input type="submit" value="Mark as Complete" class="btn btn-lg btn-secondary" ></p>
+                      </form> -->
+                </div>
+            </div>
 
-        <!-- <form action="{% url 'mark_task_complete' task.task_title %}" method="post" >
-            {% csrf_token %}
-            <p><input type="submit" value="Mark as Complete" class="btn btn-lg btn-secondary" ></p>
-          </form> -->
-
-    <form action="{% url 'mark_task_complete' task.task_title %}" method="post" onsubmit="return getTaskDetails()">
-        {% csrf_token %}
-        <input type="hidden" name="days" id="days">
-        <input type="hidden" name="hours" id="hours">
-        <p><input type="submit" value="Mark as Complete" class="btn btn-lg btn-secondary"></p>
-    </form>
+            <div class="col-md-6">
+                <div class="mt-2">
+                <form action="{% url 'mark_task_complete' task.task_title %}" method="post" onsubmit="return getTaskDetails()">
+                    {% csrf_token %}
+                    <input type="hidden" name="days" id="days">
+                    <input type="hidden" name="hours" id="hours">
+                    <p><input type="submit" value="Mark as Complete" class="btn subheading-small"></p>
+                </form>
+            
+                <p>
+                    <a href="{% url 'edit_task' task.task_title %}" class="btn subheading-small">Edit this Task</a>
+                </p>
+                
+                <p>
+                    <a href="{% url 'team_dashboard' id=teamId %}" class="btn subheading-small">Back to Dashboard</a>
+                </p>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    
 
     <script>
         function getTaskDetails() {
@@ -44,13 +66,7 @@
         }
     </script>
     
-    <p>
-        <a href="{% url 'edit_task' task.task_title %}" class="btn btn-lg btn-secondary">Edit this Task</a>
-    </p>
-    </div>
-    <p>
-        <a href="{% url 'task_list' %}" class="btn btn-lg btn-secondary">Back to Task List</a>
-    </p>
+  
     
 </body>
 </html>

@@ -99,9 +99,9 @@ def my_teams(request):
 
     return render(request, 'my_teams.html', {'teams': teams})
 
-def task_detail(request, task_title):
+def task_detail(request, task_title, teamId):
     task = get_object_or_404(Task, pk=task_title)
-    return render(request, 'task_detail.html', {'task': task})
+    return render(request, 'task_detail.html', {'task': task, 'teamId' : teamId})
 
 
 def edit_task(request, task_title):
@@ -346,6 +346,7 @@ class TeamDashboardView(LoginRequiredMixin, View):
     def get(self, request, id):
         # Retrieve the team by id, or show a 404 error if not found
         team = get_object_or_404(Team, id=id)
+        tasks = Task.objects.all()
 
         # You can add more context data as needed
         context = {
@@ -353,7 +354,8 @@ class TeamDashboardView(LoginRequiredMixin, View):
             'team_description': team.team_description,
             'members': team.members.all(),
             'created_at': team.created_at,
-            'id': id
+            'id': id,
+            'tasks' : tasks
             # Add more context data here
         }
 

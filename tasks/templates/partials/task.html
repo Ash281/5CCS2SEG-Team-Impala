@@ -1,0 +1,5 @@
+<li class="task">
+    <p class="clickable-cell"><a href="{% url 'task_detail' task_title=task.id teamId=16 %}"><strong>{{ task.task_title }}:</strong></a>{{ task.task_description }}</p>
+    <p>Assigned to: {{ task.assignees }}</p>
+    <p><strong>Due:</strong> {{ task.due_date }}
+    <strong>Priority:</strong> {{ task.get_priority_display }}</p>
