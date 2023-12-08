@@ -99,9 +99,9 @@ def my_teams(request):
 
     return render(request, 'my_teams.html', {'teams': teams})
 
-def task_detail(request, task_title, teamId):
+def task_detail(request, task_title):
     task = get_object_or_404(Task, pk=task_title)
-    return render(request, 'task_detail.html', {'task': task, 'teamId' : teamId})
+    return render(request, 'task_detail.html', {'task': task})
 
 
 def edit_task(request, task_title):

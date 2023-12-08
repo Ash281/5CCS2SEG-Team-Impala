@@ -2,10 +2,10 @@
 <nav class="navbar navbar-expand-lg">
   <div class="container small-font mt-0"> 
     <ul class="list-unstyled vcenter-item mt-2">
-      <li style="margin-left:10px;"><a href={% url 'create_team' %}>Create Team</a></li>
       <li style="margin-left:10px;"><a href={% url 'dashboard' %}>Dashboard</a></li>
       <li style="margin-left:10px;"><a href='#'>My Tasks</a></li>
-      <li style="margin-left:10px;"><a href="#">Teams</a></li>
+      <li style="margin-left:10px;"><a href={% url 'my_teams' %}>My Teams</a></li>
+      <li style="margin-left:10px;"><a href={% url 'create_team' %}>Create Team</a></li>
     </ul>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>

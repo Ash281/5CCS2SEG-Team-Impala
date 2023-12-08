@@ -1,10 +1,6 @@
 {% extends 'base_content.html' %}
 
 {% block main_content %}
-<head>
-    <title>Task Details</title>
-</head>
-<body>
     <h1>Task Details</h1>
 
     <div class="container">
@@ -40,7 +36,7 @@
                 </p>
                 
                 <p>
-                    <a href="{% url 'team_dashboard' id=teamId %}" class="btn subheading-small">Back to Dashboard</a>
+                    <a href="{% url 'team_dashboard' id=task.team.id %}" class="btn subheading-small">Back to Dashboard</a>
                 </p>
                 </div>
             </div>
@@ -67,7 +63,4 @@
     </script>
     
   
-    
-</body>
-</html>
 {% endblock %}
