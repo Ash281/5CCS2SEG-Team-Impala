@@ -59,7 +59,7 @@ h2.medium-font{
 
 .small-font {
   font-family:"Londrina Solid", sans-serif;
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-style: normal;
   font-weight: 400;
   margin-top: 1rem;
@@ -162,6 +162,7 @@ h2.medium-font{
 
 .navbar {
   background-color: #FDAAAA;
+  padding: 0;
   color:black
 }
 

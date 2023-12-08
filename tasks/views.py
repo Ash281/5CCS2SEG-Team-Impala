@@ -346,7 +346,7 @@ class TeamDashboardView(LoginRequiredMixin, View):
     def get(self, request, id):
         # Retrieve the team by id, or show a 404 error if not found
         team = get_object_or_404(Team, id=id)
-        tasks = Task.objects.all()
+        tasks = Task.objects.filter(team=team)
 
         # You can add more context data as needed
         context = {
@@ -422,9 +422,6 @@ class CreateTaskView(LoginRequiredMixin, View):
         if form.is_valid():
             # Save the form and do any other necessary logic
             form.save()
-
-            # Redirect or render as necessary
-            # return redirect('some-view')
 
         # If the form is not valid, render the page with the form errors
         context = {

@@ -112,6 +112,7 @@ class Task(models.Model):
     # )
     assignees = models.ManyToManyField(User, blank=True, related_name='assigned_tasks')
     hours_spent = models.CharField(max_length = 500, default='', blank=False)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, null=False)
 
     STATUS_CHOICES = [('NOT_STARTED', 'Not Completed'), ('IN_PROGRESS', 'In Progress'), ('COMPLETED', 'Completed') ]
     status = models.CharField(max_length=20,choices=STATUS_CHOICES,default='NOT_STARTED')
