@@ -98,8 +98,10 @@ def task_list(request):
 
 def my_teams(request):
     teams = Team.objects.all()
+    current_user = request.user
+    user_teams = current_user.teams.all()
 
-    return render(request, 'my_teams.html', {'teams': teams})
+    return render(request, 'my_teams.html', {'user_teams': user_teams})
 
 def task_detail(request, task_title):
     task = get_object_or_404(Task, pk=task_title)
