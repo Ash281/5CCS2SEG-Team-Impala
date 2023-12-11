@@ -362,9 +362,10 @@ class TeamDashboardView(LoginRequiredMixin, View):
         }
 
         # return reverse('team_dashboard')
-        
-        print(f"All teams: {id}")
-        return render(request, 'team_dashboard.html', context)
+        if request.user in team.members.all():
+            return render(request, 'team_dashboard.html', context)
+        else:
+            return redirect('dashboard')
     
 # class CreateTaskView(LoginRequiredMixin, View):
 #     """Display the dashboard for a specific team."""
