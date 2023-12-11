@@ -437,9 +437,8 @@ class CreateTaskView(LoginRequiredMixin, View):
             'created_at': team.created_at,
             'id': id
         }
-
-        return render(request, 'create_task.html', context)
-
+        return redirect('team_dashboard', id=id)
+    
 class RemoveMembersView(LoginRequiredMixin, View):
     """View to display a page for removing members from a team."""
 
@@ -497,6 +496,15 @@ class LeaveTeamView(LoginRequiredMixin, View):
         team = get_object_or_404(Team, id=id)
         team.members.remove(request.user)
         messages.add_message(request, messages.SUCCESS, "You've successfully left the team!")
+        if team.members.count() == 0:
+            team.delete()
+        return redirect('dashboard')
+    
+class DeleteTeamView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        team = get_object_or_404(Team, id=id)
+        team.delete()
+        messages.add_message(request, messages.SUCCESS, "You've successfully deleted the team!")
         return redirect('dashboard')
     
 class JoinTeamView(View):
