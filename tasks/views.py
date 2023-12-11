@@ -98,8 +98,10 @@ def task_list(request):
 
 def my_teams(request):
     teams = Team.objects.all()
+    current_user = request.user
+    user_teams = current_user.teams.all()
 
-    return render(request, 'my_teams.html', {'teams': teams})
+    return render(request, 'my_teams.html', {'user_teams': user_teams})
 
 def task_detail(request, task_title):
     task = get_object_or_404(Task, pk=task_title)
@@ -128,6 +130,12 @@ def mark_task_complete(request, task_title):
     task.hours_spent = total_hours_spent
     task.save()
     return render(request, 'task_detail.html', {'task': task})
+
+def delete_task(request, task_title):
+    task = get_object_or_404(Task, task_title=task_title)
+    id = task.team.id
+    task.delete()
+    return redirect('team_dashboard', id=id)
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
@@ -362,9 +370,10 @@ class TeamDashboardView(LoginRequiredMixin, View):
         }
 
         # return reverse('team_dashboard')
-        
-        print(f"All teams: {id}")
-        return render(request, 'team_dashboard.html', context)
+        if request.user in team.members.all():
+            return render(request, 'team_dashboard.html', context)
+        else:
+            return redirect('dashboard')
     
 # class CreateTaskView(LoginRequiredMixin, View):
 #     """Display the dashboard for a specific team."""
@@ -434,9 +443,8 @@ class CreateTaskView(LoginRequiredMixin, View):
             'created_at': team.created_at,
             'id': id
         }
-
-        return render(request, 'create_task.html', context)
-
+        return redirect('team_dashboard', id=id)
+    
 class RemoveMembersView(LoginRequiredMixin, View):
     """View to display a page for removing members from a team."""
 
@@ -488,6 +496,22 @@ class AddMembersView(LoginRequiredMixin, View):
             messages.add_message(request, messages.ERROR, "This user is either already in the team or does not exist!")
 
         return render(self.request, 'add_members.html', {'form': form, 'team_id': team_id})
+    
+class LeaveTeamView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        team = get_object_or_404(Team, id=id)
+        team.members.remove(request.user)
+        messages.add_message(request, messages.SUCCESS, "You've successfully left the team!")
+        if team.members.count() == 0:
+            team.delete()
+        return redirect('dashboard')
+    
+class DeleteTeamView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        team = get_object_or_404(Team, id=id)
+        team.delete()
+        messages.add_message(request, messages.SUCCESS, "You've successfully deleted the team!")
+        return redirect('dashboard')
     
 class JoinTeamView(View):
     def get(self, *args, **kwargs):

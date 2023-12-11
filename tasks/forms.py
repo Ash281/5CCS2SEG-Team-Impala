@@ -238,6 +238,9 @@ class CreateTaskForm(forms.ModelForm):
         task.team_id = self.team_id
         if commit:
             task.save()
+            task.assignees.add(self.cleaned_data['assignees'])
+            self.save_m2m()
+            task.save()
         return task
 
     class Meta:

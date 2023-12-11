@@ -5,7 +5,15 @@
         </a>
         {{ task.task_description }}
     </p>
-    <p>Assigned to: {{ task.assignees }}</p>
+    <p><strong>Assigned to:</strong>
+        {% if task.assignees.all %}
+            {% for assignee in task.assignees.all %}
+                {{ assignee.username }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        {% else %}
+            No assignees
+        {% endif %}
+    </p>
     <p><strong>Due:</strong> {{ task.due_date }}
     <strong>Priority:</strong> {{ task.get_priority_display }}</p>
 </li>
