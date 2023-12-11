@@ -489,6 +489,13 @@ class AddMembersView(LoginRequiredMixin, View):
 
         return render(self.request, 'add_members.html', {'form': form, 'team_id': team_id})
     
+class LeaveTeamView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        team = get_object_or_404(Team, id=id)
+        team.members.remove(request.user)
+        messages.add_message(request, messages.SUCCESS, "You've successfully left the team!")
+        return redirect('dashboard')
+    
 class JoinTeamView(View):
     def get(self, *args, **kwargs):
         token = kwargs.get('token')
