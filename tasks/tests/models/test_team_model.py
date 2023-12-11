@@ -77,3 +77,15 @@ class TeamModelTestCase(TestCase):
     def _assert_team_is_invalid(self):
         with self.assertRaises(ValidationError):
             self.team.full_clean()
+
+    # def test_remove_member(self):
+    #     # Test removing an existing member
+    #     member_to_remove = Team.objects.get(name="Test User 1")
+    #     member_count_before = Team.objects.count()
+
+    #     # Call your remove member function
+    #     member_to_remove.remove_member()
+
+    #     # Check if the member was removed
+    #     self.assertEqual(Team.objects.count(), member_count_before - 1)
+    #     self.assertFalse(Team.objects.filter(name="Test User 1").exists())

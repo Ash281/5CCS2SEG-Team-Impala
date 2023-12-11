@@ -67,6 +67,7 @@ class Team(models.Model):
 
     members = models.ManyToManyField(User, related_name='teams')
     created_at = models.DateTimeField(auto_now_add=True)
+    team_admins = models.ManyToManyField(User, related_name='admin_teams', blank=True)
 
     class Meta:
         """Model options."""

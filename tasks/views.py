@@ -21,7 +21,7 @@ from .models import Task
 from django.views.decorators.http import require_POST
 from django.utils.dateparse import parse_date
 
-from tasks.forms import LogInForm, NewPasswordMixin, PasswordForm, EmailVerificationForm, UserForm, SignUpForm
+from tasks.forms import LogInForm, NewPasswordMixin, PasswordForm, EmailVerificationForm, UserForm, SignUpForm, InviteMemberForm
 from tasks.helpers import login_prohibited
 from .models import User
 
@@ -32,8 +32,10 @@ def dashboard(request):
     current_user = request.user
     first_three = Task.objects.order_by('due_date')[:3]
     next_three = Task.objects.order_by('due_date')[3:6]
+    user_teams = current_user.teams.all()
 
-    return render(request, 'dashboard.html', {'user': current_user, 'first_three': first_three, 'next_three': next_three})
+
+    return render(request, 'dashboard.html', {'user': current_user, 'first_three': first_three, 'next_three': next_three, 'user_teams': user_teams})
 
 
 @login_prohibited
@@ -470,3 +472,43 @@ class RemoveMembersView(LoginRequiredMixin, View):
                 messages.add_message(request, messages.WARNING, f"Member {member_to_remove.username} is not in the team.")
         team.save()
         return redirect('team_dashboard', id=id)
+    
+class AddMembersView(LoginRequiredMixin, View):
+    def get(self, request, team_id):
+        form = InviteMemberForm(initial={'team_id': team_id})
+        return render(self.request, 'add_members.html', {'form': form, 'team_id': team_id})
+
+    def post(self, request, team_id):
+        form = InviteMemberForm(request.POST)
+        if form.is_valid():
+            form.save()
+            print(team_id)
+            messages.add_message(request, messages.SUCCESS, "Invitation sent successfully!")
+        else:
+            messages.add_message(request, messages.ERROR, "This user is either already in the team or does not exist!")
+
+        return render(self.request, 'add_members.html', {'form': form, 'team_id': team_id})
+    
+class JoinTeamView(View):
+    def get(self, *args, **kwargs):
+        token = kwargs.get('token')
+        team_id = self.request.GET.get('team_id')  # Extract team_id from URL parameters
+        user = self.validate_token(token)
+
+        if user and team_id:
+            # Add the user to the team
+            team = Team.objects.get(id=team_id)
+            team.members.add(user)
+
+            messages.add_message(self.request, messages.SUCCESS, "You've successfully joined the team!")
+            return redirect('team_dashboard', id=team_id)
+        else:
+            messages.add_message(self.request, messages.ERROR, "Invalid or expired invitation")
+            return redirect(self.get_fail_redirect_url())
+    
+    def validate_token(self, token):
+        try:
+            user = User.objects.filter(email_verification_token=uuid.UUID(str(token))).first()
+            return user
+        except:
+            return None

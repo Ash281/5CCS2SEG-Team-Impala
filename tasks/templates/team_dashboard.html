@@ -77,7 +77,7 @@
             </div>
         </div>
     </div>
-
+    --> 
     <!-- Tasks and Assigned Members Section  -->
     <div class="container">
         <div class="row">
@@ -125,7 +125,20 @@
             </div>
             
         </div>
-    </div>s
+    </div>
     
+    </div>
+
+    <!-- Additional Sections -->
+    <!-- Here you can add more sections like 'Upcoming Events', 'Recent Achievements', etc. -->
+    <a href="{% url 'remove_members' id %}">
+        <button>Remove Members</button>
+    </a>
+
+    <a href="{% url 'add_members' id %}">
+        <button>Add Members</button>
+    </a>
+
+
 </div>
 {% endblock %}
