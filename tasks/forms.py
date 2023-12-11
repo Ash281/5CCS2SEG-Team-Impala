@@ -238,6 +238,8 @@ class CreateTaskForm(forms.ModelForm):
         task.team_id = self.team_id
         if commit:
             task.save()
+        print(f"My team my {self.team_id} and new id {task.team_id}")
+        
         return task
 
     class Meta:
