@@ -248,8 +248,7 @@ class CreateTaskForm(forms.ModelForm):
         labels = {
             'task_title': 'Task title',
             'task_description': 'Task description',
-            'due_date': 'Due date',
-            'assignees': 'Assign to', 
+            'due_date': 'Due date', 
             'priority': 'Priority'
         
         }
