@@ -131,6 +131,12 @@ def mark_task_complete(request, task_title):
     task.save()
     return render(request, 'task_detail.html', {'task': task})
 
+def delete_task(request, task_title):
+    task = get_object_or_404(Task, task_title=task_title)
+    id = task.team.id
+    task.delete()
+    return redirect('team_dashboard', id=id)
+
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
 

@@ -38,6 +38,11 @@
                 <p>
                     <a href="{% url 'team_dashboard' id=task.team.id %}" class="btn subheading-small">Back to Dashboard</a>
                 </p>
+
+                <p>
+                    <a href="{% url 'delete_task' task.task_title %}" class="btn subheading-small">Delete this Task</a>
+                </p>
+                
                 </div>
             </div>
         </div>
