@@ -241,6 +241,11 @@ class CreateTaskForm(forms.ModelForm):
             task.assignees.add(self.cleaned_data['assignees'])
             self.save_m2m()
             task.save()
+            task.assignees.add(self.cleaned_data['assignees'])
+            self.save_m2m()
+            task.save()
+        print(f"My team my {self.team_id} and new id {task.team_id}")
+        
         return task
 
     class Meta:
@@ -249,8 +254,7 @@ class CreateTaskForm(forms.ModelForm):
         labels = {
             'task_title': 'Task title',
             'task_description': 'Task description',
-            'due_date': 'Due date',
-            'assignees': 'Assign to', 
+            'due_date': 'Due date', 
             'priority': 'Priority'
         
         }

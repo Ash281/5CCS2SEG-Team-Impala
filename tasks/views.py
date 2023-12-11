@@ -110,11 +110,14 @@ def task_detail(request, task_title):
 
 def edit_task(request, task_title):
     task = get_object_or_404(Task, task_title=task_title)
+    team = get_object_or_404(Team, id=task.team.id)
+    print(task.assignees)
+    print("HELOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
     if request.method == 'POST':
-        form = CreateTaskForm(request.POST, instance=task)
+        form = CreateTaskForm(request.POST, team_id=team.id, instance=task)
         if form.is_valid():
             form.save()
-            return redirect('task_list')  
+            return redirect('team_dashboard', id=task.team.id) 
     else:
         form = CreateTaskForm(instance=task)
     return render(request, 'edit_task.html', {'form': form, 'task': task})
