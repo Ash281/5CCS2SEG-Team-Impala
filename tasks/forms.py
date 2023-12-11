@@ -225,9 +225,10 @@ class CreateTeamForm(forms.ModelForm):
 class CreateTaskForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
-        self.team_id = kwargs.pop('team_id', None)
+        self.team_id = kwargs.pop('team_id')
         super(CreateTaskForm, self).__init__(*args, **kwargs)
 
+        print(f"My team my {self.team_id}")
         if self.team_id:
             self.fields['assignees'].queryset = User.objects.filter(teams__id=self.team_id)
         else:
@@ -238,13 +239,10 @@ class CreateTaskForm(forms.ModelForm):
         task.team_id = self.team_id
         if commit:
             task.save()
-            task.assignees.add(self.cleaned_data['assignees'])
+            for user in self.cleaned_data['assignees']:
+                task.assignees.add(user.id)
             self.save_m2m()
             task.save()
-            task.assignees.add(self.cleaned_data['assignees'])
-            self.save_m2m()
-            task.save()
-        print(f"My team my {self.team_id} and new id {task.team_id}")
         
         return task
 
