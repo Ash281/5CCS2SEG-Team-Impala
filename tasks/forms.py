@@ -67,8 +67,45 @@ class EmailVerificationForm(forms.Form):
         subject = 'Reset Password Link'
         body = f"Hi there, \nThis is your link to reset your password: http://127.0.0.1:8000/new_password/{token}/"
         send_mail(subject, body, settings.EMAIL_HOST_USER, [email])
- 
 
+class InviteMemberForm(forms.Form):
+    team_id = forms.IntegerField(widget=forms.HiddenInput())
+    username = forms.CharField(max_length=100)
+
+    def clean(self):
+        super().clean()
+
+        username = self.cleaned_data.get("username")
+        team_id = self.cleaned_data.get("team_id")
+
+        try:
+            user = User.objects.get(username=username)
+            team = Team.objects.get(id=team_id)
+
+            # Check if the user is already in the team
+            if user in team.members.all():
+                self.add_error('username', 'User is already in the team!')
+        except User.DoesNotExist:
+            self.add_error('username', 'User not found!')
+
+        return self.cleaned_data
+    
+    def save(self):
+        if self.is_valid():
+            username = self.cleaned_data.get("username")
+            user = User.objects.get(username=username)
+
+            token = str(uuid.uuid4())
+            team_id = self.cleaned_data.get("team_id")
+            self.invite_members(user.email, token, team_id)
+
+            user.email_verification_token = token
+            user.save()        
+
+    def invite_members(self, email, token, team_id):
+        subject = 'Invite Link'
+        body = f"Hi there, \nThis is your link to join Team: http://127.0.0.1:8000/join_team/{token}?team_id={team_id}"
+        send_mail(subject, body, settings.EMAIL_HOST_USER, [email])
 
 class NewPasswordMixin(forms.Form):
     """Form mixing for new_password and password_confirmation fields."""
