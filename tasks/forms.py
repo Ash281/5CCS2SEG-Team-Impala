@@ -238,6 +238,7 @@ class CreateTaskForm(forms.ModelForm):
         task = super(CreateTaskForm, self).save(commit=False)
         task.team_id = self.team_id 
         if commit:
+            task.save()
             existing_assignees = task.assignees.all()
             selected_users = [user for user in self.cleaned_data['assignees'] if user not in existing_assignees]
             print("Selected users", selected_users)
