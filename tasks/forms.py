@@ -238,24 +238,30 @@ class CreateTaskForm(forms.ModelForm):
         task = super(CreateTaskForm, self).save(commit=False)
         task.team_id = self.team_id 
         if commit:
+            task.save()
+
             existing_assignees = task.assignees.all()
             selected_users = [user for user in self.cleaned_data['assignees'] if user not in existing_assignees]
-            print("Selected users", selected_users)
-
-            task.save()
             task.assignees.set(selected_users)  # Set the assignees to the selected users
+
+            print(self.cleaned_data['status'])
+            if self.cleaned_data['status'] == "DONE":
+                print("Taks has been completed")
+                task.hours_spent = task.duration()
+
             task.save()
 
         return task
 
     class Meta:
         model = Task
-        fields = ['task_title', 'task_description', 'due_date', 'assignees', 'priority']
+        fields = ['task_title', 'task_description', 'due_date', 'assignees', 'priority', 'status']
         labels = {
             'task_title': 'Task title',
             'task_description': 'Task description',
             'due_date': 'Due date', 
-            'priority': 'Priority'
+            'priority': 'Priority',
+            'status': 'Status'
         
         }
         widgets = { 'task_description': forms.Textarea(), 'due_date': forms.DateInput(attrs={'type': 'date'}), 'assignees': forms.CheckboxSelectMultiple() }

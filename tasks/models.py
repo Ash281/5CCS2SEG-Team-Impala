@@ -101,10 +101,14 @@ class Team(models.Model):
 
 class Task(models.Model):
     PRIORITY_CHOICES = [ ('HI', 'High'), ('MD', 'Medium'), ('LW', 'Low'), ]
+    STATUS_CHOICES = [ ('TODO', 'Not Completed'), ('IN_PROGREESS', 'In Progress'), ('DONE', 'Completed'), ]
 
     task_title = models.CharField(max_length = 50, default='', blank=False, unique=True, validators=[MinLengthValidator(3, message="Title must be a minimum of 3 characters")])
     task_description = models.CharField(max_length = 500, default='', blank=False,  validators=[MinLengthValidator(10, message="Description must be a minimum of 10 characters")])
     due_date = models.DateField(default=datetime.date.today, validators=[validate_not_past_date])
+    created_at = models.DateTimeField(auto_now_add=True, editable=False, null=False)
+    duration_time = models.DateTimeField(null=True)
+
     # assignees = models.CharField(max_length = 50, default='')
     priority = models.CharField(max_length=2, choices=PRIORITY_CHOICES, default='LW')
     # assignees = models.ModelMultipleChoiceField(
@@ -114,9 +118,26 @@ class Task(models.Model):
     assignees = models.ManyToManyField(User, blank=True, related_name='assigned_tasks')
     hours_spent = models.CharField(max_length = 500, default='', blank=False)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES,default='TODO')
 
-    STATUS_CHOICES = [('NOT_STARTED', 'Not Completed'), ('IN_PROGRESS', 'In Progress'), ('COMPLETED', 'Completed') ]
-    status = models.CharField(max_length=20,choices=STATUS_CHOICES,default='NOT_STARTED')
     def __str__(self):
         return self.task_title
+    
+    def duration(self):
+        """Return the duration since the task was created."""
+
+        now = timezone.now()
+        duration = now - self.created_at
+
+        days = duration.days
+        hours, remainder = divmod(duration.seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+
+        if days > 0:
+            return f'{days} days, {hours} hours'
+        elif hours > 0:
+            return f'{hours} hours, {minutes} minutes'
+        else:
+            return f'{minutes} minutes, {seconds} seconds'
+
 

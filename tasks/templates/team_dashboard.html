@@ -124,6 +124,7 @@
                     {% for task in tasks %}
                         {% if task.get_status_display == "Completed"%}
                         {% include 'partials/task.html' %}
+                        <p>Task duration: {{ task.hours_spent }}</p>
                         {% endif %}
                     {% empty %}
                         <p colspan="3">No tasks available.</p>
