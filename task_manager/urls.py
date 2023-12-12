@@ -48,5 +48,6 @@ urlpatterns = [
     path('tasks/delete/<str:task_title>/', views.delete_task, name='delete_task'),
 
     path('my_teams/', views.my_teams, name='my_teams'),
+    path('my_tasks/', views.my_tasks, name='my_tasks'),
 
 ]

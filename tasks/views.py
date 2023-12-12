@@ -97,11 +97,17 @@ def task_list(request):
     return render(request, 'task_list.html', {'tasks': tasks, 'sort_by': sort_by, 'filter_by': filter_by})
 
 def my_teams(request):
-    teams = Team.objects.all()
     current_user = request.user
     user_teams = current_user.teams.all()
 
     return render(request, 'my_teams.html', {'user_teams': user_teams})
+
+def my_tasks(request):
+    current_user = request.user
+    user_teams = current_user.teams.all()
+    tasks = Task.objects.filter(assignees=current_user.id)
+
+    return render(request, 'my_tasks.html', {'user_teams': user_teams, 'user_tasks': tasks})
 
 def task_detail(request, task_title):
     task = get_object_or_404(Task, pk=task_title)
