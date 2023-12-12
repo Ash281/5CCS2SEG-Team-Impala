@@ -2,7 +2,7 @@
 
 {% block main_content %}
 
-<form method="post">
+<form method="post" select class = "form-control" multiple>
     {% csrf_token %}
     {% include 'partials/bootstrap_form.html' with form=form %}
     <p><input type="submit" value="Save Changes" class="btn btn-lg btn-secondary"> </p>

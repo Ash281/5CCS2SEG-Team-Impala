@@ -236,14 +236,16 @@ class CreateTaskForm(forms.ModelForm):
 
     def save(self, commit=True):
         task = super(CreateTaskForm, self).save(commit=False)
-        task.team_id = self.team_id
+        task.team_id = self.team_id 
         if commit:
+            existing_assignees = task.assignees.all()
+            selected_users = [user for user in self.cleaned_data['assignees'] if user not in existing_assignees]
+            print("Selected users", selected_users)
+
             task.save()
-            for user in self.cleaned_data['assignees']:
-                task.assignees.add(user.id)
-            self.save_m2m()
+            task.assignees.set(selected_users)  # Set the assignees to the selected users
             task.save()
-        
+
         return task
 
     class Meta:
