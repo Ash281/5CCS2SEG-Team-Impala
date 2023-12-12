@@ -26,6 +26,7 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank=False)
     email_verification_token = models.UUIDField(null=True, blank=True)
+    jelly_points = models.IntegerField(blank=False, null=False, default=0)
 
 
     class Meta:
@@ -107,16 +108,16 @@ class Task(models.Model):
     task_description = models.CharField(max_length = 500, default='', blank=False,  validators=[MinLengthValidator(10, message="Description must be a minimum of 10 characters")])
     due_date = models.DateField(default=datetime.date.today, validators=[validate_not_past_date])
     created_at = models.DateTimeField(auto_now_add=True, editable=False, null=False)
-    duration_time = models.DateTimeField(null=True)
-
+    hours_spent = models.CharField(max_length = 500, default='', blank=False)
+    jelly_points = models.IntegerField(blank=False, null=False, default=0)
+    assignees = models.ManyToManyField(User, blank=True, related_name='assigned_tasks')
     # assignees = models.CharField(max_length = 50, default='')
-    priority = models.CharField(max_length=2, choices=PRIORITY_CHOICES, default='LW')
     # assignees = models.ModelMultipleChoiceField(
     #     queryset=TeamMember.objects.all(),
     #     required=False
     # )
-    assignees = models.ManyToManyField(User, blank=True, related_name='assigned_tasks')
-    hours_spent = models.CharField(max_length = 500, default='', blank=False)
+
+    priority = models.CharField(max_length=2, choices=PRIORITY_CHOICES, default='LW')
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES,default='TODO')
 

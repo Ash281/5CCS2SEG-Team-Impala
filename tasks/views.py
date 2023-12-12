@@ -429,7 +429,7 @@ class CreateTaskView(LoginRequiredMixin, View):
             'id': id
         }
 
-        return render(request, 'create_task.html', context)
+        return render(request, 'edit_task.html', context)
 
     def post(self, request, id):
         # Retrieve the team by id, or show a 404 error if not found

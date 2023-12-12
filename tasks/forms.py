@@ -240,14 +240,19 @@ class CreateTaskForm(forms.ModelForm):
         if commit:
             task.save()
 
+           
             existing_assignees = task.assignees.all()
-            selected_users = [user for user in self.cleaned_data['assignees'] if user not in existing_assignees]
-            task.assignees.set(selected_users)  # Set the assignees to the selected users
+            print(f"My assignees {existing_assignees}")
+            #selected_users = [user for user in self.cleaned_data['assignees'] if user not in existing_assignees]
+            task.assignees.set(self.cleaned_data['assignees'])  # Set the assignees to the selected users
+            
 
-            print(self.cleaned_data['status'])
             if self.cleaned_data['status'] == "DONE":
-                print("Taks has been completed")
                 task.hours_spent = task.duration()
+                for user in task.assignees.all():
+                    print("My jelly points")
+                    user.jelly_points += task.jelly_points
+                    user.save()
 
             task.save()
 
@@ -255,7 +260,7 @@ class CreateTaskForm(forms.ModelForm):
 
     class Meta:
         model = Task
-        fields = ['task_title', 'task_description', 'due_date', 'assignees', 'priority', 'status']
+        fields = ['task_title', 'task_description', 'due_date', 'jelly_points', 'assignees', 'priority', 'status']
         labels = {
             'task_title': 'Task title',
             'task_description': 'Task description',
@@ -264,6 +269,6 @@ class CreateTaskForm(forms.ModelForm):
             'status': 'Status'
         
         }
-        widgets = { 'task_description': forms.Textarea(), 'due_date': forms.DateInput(attrs={'type': 'date'}), 'assignees': forms.CheckboxSelectMultiple() }
+        widgets = { 'task_description': forms.Textarea(), 'due_date': forms.DateInput(attrs={'type': 'date'})}
 
     
