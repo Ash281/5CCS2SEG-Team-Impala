@@ -124,27 +124,60 @@ class TaskTestCase(TestCase):
         self._assert_task_is_invalid()
    
     def test_task_priority_can_be_low(self):
-        pass
+        valid_priority_choices = [status[0] for status in Task.PRIORITY_CHOICES]
+        my_priority = 'LW'
+        self.assertIn(my_priority, valid_priority_choices)
+        self.task.priority = my_priority
+        self.task.save()
+        self.assertEqual(self.task.priority, my_priority)
+        self._assert_task_is_valid()
+
     def test_task_priority_can_be_med(self):
-        pass
+        valid_priority_choices = [status[0] for status in Task.PRIORITY_CHOICES]
+        my_priority = 'MD'
+        self.assertIn(my_priority, valid_priority_choices)
+        self.task.priority = my_priority
+        self.task.save()
+        self.assertEqual(self.task.priority, my_priority)
+
+        self._assert_task_is_valid()
     def test_task_priority_can_be_high(self):
-        pass
+        valid_priority_choices = [status[0] for status in Task.PRIORITY_CHOICES]
+        my_priority = 'HI'
+        self.assertIn(my_priority, valid_priority_choices)
+        self.task.priority = my_priority
+        self.task.save()
+        self.assertEqual(self.task.priority, my_priority)
+        self._assert_task_is_valid()
+
     def test_task_priority_cannot_be_anything_else(self):
-        pass
+        valid_priority_choices = [status[0] for status in Task.PRIORITY_CHOICES]
+        my_priority = 'INVALID'
+        self.assertNotIn(my_priority, valid_priority_choices)
+        self.task.priority = my_priority
+        self._assert_task_is_invalid()
 
     def test_task_jelly_points_cannot_be_negative(self): 
-        pass    
+        self.task.jelly_points = -1
+        self._assert_task_is_invalid()
+
     def test_task_jelly_points_cannot_be_zero(self): 
-        pass    
+        self.task.jelly_points = 0
+        self._assert_task_is_invalid()
+
     def test_task_jelly_points_cannot_be_over_50(self):
-        pass
+        self.task.jelly_points = 51
+        self._assert_task_is_invalid()
 
     def test_task_hours_spent_is_set_when_completed(self):
-        pass
+        self.task.hours_spent = ''
+        self._assert_task_is_invalid()
     def test_task_hours_spent_is_updated_when_recompleted(self):
-        pass
+        self.task.hours_spent = ''
+        self._assert_task_is_invalid()
     def test_task_created_at_cannot_be_null(self):
-        pass
+        self.task.hours_spent = None
+        self._assert_task_is_invalid()
 
 
     def _assert_task_is_valid(self):
