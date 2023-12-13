@@ -11,6 +11,7 @@ class TaskTestCase(TestCase):
     fixtures = [
 
         'tasks/tests/fixtures/default_user.json',
+        'tasks/tests/fixtures/other_users.json',
         'tasks/tests/fixtures/default_team.json',
         'tasks/tests/fixtures/default_task.json',
         'tasks/tests/fixtures/other_tasks.json'
@@ -19,7 +20,8 @@ class TaskTestCase(TestCase):
     def setUp(self):
         self.task = Task.objects.get(task_title='Task 1')
         self.user = User.objects.get(username='@johndoe')
-        self.team = Team.objects.get(team_name='Team Impala')
+        self.second_user = User.objects.get(username="@janedoe")
+        self.team = Team.objects.get(team_name="Team Impala")
 
     def test_valid_task(self):
         self._assert_task_is_valid()
@@ -76,9 +78,8 @@ class TaskTestCase(TestCase):
         self._assert_task_is_valid()
 
     def test_assignees_must_be_in_team(self):
-         
-        self.user.first_name = 'x' * 50
-        self._assert_user_is_valid()
+        for assignee in self.task.assignees.all():
+            self.assertIn(assignee, self.team.members.all())
 
     def test_due_date_cannot_be_before_today(self): 
         self.task.due_date = timezone.now().date() - timedelta(days=1)
@@ -87,6 +88,64 @@ class TaskTestCase(TestCase):
     def test_due_date_can_be_after_today(self): 
         self.task.due_date = timezone.now().date() + timedelta(days=1)
         self._assert_task_is_valid()
+
+    def test_task_status_can_be_not_completed(self):
+        valid_status_choices = [status[0] for status in Task.STATUS_CHOICES]
+        my_status = 'TODO'
+        self.assertIn(my_status, valid_status_choices)
+        self.task.status = my_status
+        self.task.save()
+        self.assertEqual(self.task.status, my_status)
+        self._assert_task_is_valid()
+
+    def test_task_status_can_be_in_progress(self):
+        valid_status_choices = [status[0] for status in Task.STATUS_CHOICES]
+        my_status = 'IN_PROGREESS'
+        self.assertIn(my_status, valid_status_choices)
+        self.task.status = my_status
+        self.task.save()
+        self.assertEqual(self.task.status, my_status)
+        self._assert_task_is_valid()
+
+    def test_task_status_can_be_completed(self):
+        valid_status_choices = [status[0] for status in Task.STATUS_CHOICES]
+        my_status = 'DONE'
+        self.assertIn(my_status, valid_status_choices)
+        self.task.status = my_status
+        self.task.save()
+        self.assertEqual(self.task.status, my_status)
+        self._assert_task_is_valid()
+    
+    def test_task_status_cannot_be_anything_else(self):
+        valid_status_choices = [status[0] for status in Task.STATUS_CHOICES]
+        my_status = 'NOT_VALID'
+        self.assertNotIn(my_status, valid_status_choices)
+        self.task.status = my_status
+        self._assert_task_is_invalid()
+   
+    def test_task_priority_can_be_low(self):
+        pass
+    def test_task_priority_can_be_med(self):
+        pass
+    def test_task_priority_can_be_high(self):
+        pass
+    def test_task_priority_cannot_be_anything_else(self):
+        pass
+
+    def test_task_jelly_points_cannot_be_negative(self): 
+        pass    
+    def test_task_jelly_points_cannot_be_zero(self): 
+        pass    
+    def test_task_jelly_points_cannot_be_over_50(self):
+        pass
+
+    def test_task_hours_spent_is_set_when_completed(self):
+        pass
+    def test_task_hours_spent_is_updated_when_recompleted(self):
+        pass
+    def test_task_created_at_cannot_be_null(self):
+        pass
+
 
     def _assert_task_is_valid(self):
         try:
