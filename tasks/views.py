@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from django.conf import settings
 from django.contrib import messages
@@ -360,6 +361,9 @@ class CreateTeamView(LoginRequiredMixin, FormView):
 
 class TeamDashboardView(LoginRequiredMixin, View):
     """Display the dashboard for a specific team."""
+    def parse_date(self, date):
+        """Parse a date string in YYYY-MM-DD format."""
+        return datetime.strptime(date, '%Y-%m-%d').date()
 
     def get(self, request, id):
         # Retrieve the team by id, or show a 404 error if not found
@@ -376,6 +380,16 @@ class TeamDashboardView(LoginRequiredMixin, View):
             priority = priority_choices[priority_filter]
         else:
             priority = None
+        start_date_filter = request.GET.get('start_date')
+        end_date_filter = request.GET.get('end_date')
+        if start_date_filter:
+            start_date = parse_date(start_date_filter)
+        else:
+            start_date = None
+        if end_date_filter:
+            end_date = parse_date(end_date_filter)
+        else:
+            end_date = None
         # You can add more context data as needed
         context = {
             'team_name': team.team_name,
@@ -385,7 +399,9 @@ class TeamDashboardView(LoginRequiredMixin, View):
             'id': id,
             'tasks' : tasks,
             'priority' : priority,
-            'filter_form' : filter_form
+            'filter_form' : filter_form,
+            'start_date' : start_date,
+            'end_date' : end_date
             # Add more context data here
         }
 
