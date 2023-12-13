@@ -43,8 +43,15 @@
         </div>
         
         <div class="setting">
-
             <form method="get">
+                {{ priority_form }}
+                {{ date_form }}
+                <button class="btn btn-sm subheading-small" type="submit">Filter</button>
+                {{ search_form }}
+                <button class="btn btn-sm subheading-small" type="submit">Search</button>
+            </form>            
+
+        <!--     <form method="get">
                 <label for="sort_by">Sort by:</label>
                 <select name="sort_by" id="sort_by" onchange="this.form.submit()">
                     <option value="due_date" {% if sort_by == "due_date" %}selected{% endif %}>Due Date</option>
@@ -76,60 +83,74 @@
                 </div>
             
                 <button class="btn btn-sm subheading-small" type="submit">Filter</button>
-            </form>
-            
-            <div>
-                <input type="text" name="search" placeholder="Search by task title" value="{{ request.GET.search }}">
-                <button type="submit" class="btn btn-sm subheading-small">Search</button>
-
-            </div>
+            </form> -->
         </div>
     </div>
     
     <!-- Tasks and Assigned Members Section  -->
     <div class="container">
         <div class="row">
+
             <div class="col-sm-12 col-lg-4">
                 <div class=" card task-card scrollable-list">
-                <h2 class="subheading-small">TODO</h2>
-                <ul class="list-unstyled">
-                    {% for task in tasks %}
-                        {% if task.get_status_display == "Not Completed" and priority is None or task.priority == priority %}
-                        {% include 'partials/task.html' %}
-                        {% endif %}
-                    {% empty %}
-                        <p colspan="3">No tasks available.</p>
-                    {% endfor %}
-                </ul>
+                    <h2 class="subheading-small">TO DO</h2>
+                    <ul class="list-unstyled">
+                        {% for task in tasks %}
+                            {% if task.get_status_display == "Not Completed" %}
+                                {% if task.priority == priority or priority is None %}
+                                    {% if task.due_date >= start_date and task.due_date <= end_date or start_date is None or end_date is None %}
+                                        {% if search in task.task_title or search is None %}
+                                            {% include 'partials/task.html' %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% empty %}
+                            <p colspan="3">No tasks available.</p>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
+            
             <div class="col-sm-12 col-lg-4">
                 <div class=" card task-card scrollable-list">
-                <h2 class="subheading-small">IN PROGRESS</h2>
-                <ul class="list-unstyled">
-                    {% for task in tasks %}
-                        {% if task.get_status_display == "In Progress" and priority is None or task.priority == priority %}
-                        {% include 'partials/task.html' %}
-                        {% endif %}
-                    {% empty %}
-                        <p colspan="3">No tasks available.</p>
-                    {% endfor %}
-                </ul>
+                    <h2 class="subheading-small">IN PROGRESS</h2>
+                    <ul class="list-unstyled">
+                        {% for task in tasks %}
+                            {% if task.get_status_display == "In Progress" %}
+                                {% if task.priority == priority or priority is None %}
+                                    {% if task.due_date >= start_date and task.due_date <= end_date or start_date is None or end_date is None %}
+                                    {% if search in task.task_title or search is None %}
+                                        {% include 'partials/task.html' %}
+                                    {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% empty %}
+                            <p colspan="3">No tasks available.</p>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
-            <div class="col-sm-12 col-lg-4">
+
+           <div class="col-sm-12 col-lg-4">
                 <div class=" card task-card scrollable-list">
-                <h2 class="subheading-small">DONE</h2>
-                <ul class="list-unstyled">
-                    {% for task in tasks %}
-                        {% if task.get_status_display == "Completed" and priority is None or task.priority == priority %}
-                        {% include 'partials/task.html' %}
-                        <p>Task duration: {{ task.hours_spent }}</p>
-                        {% endif %}
-                    {% empty %}
-                        <p colspan="3">No tasks available.</p>
-                    {% endfor %}
-                </ul>
+                    <h2 class="subheading-small">COMPLETED</h2>
+                    <ul class="list-unstyled">
+                        {% for task in tasks %}
+                            {% if task.get_status_display == "Completed" %}
+                                {% if task.priority == priority or priority is None %}
+                                    {% if task.due_date >= start_date and task.due_date <= end_date or start_date is None or end_date is None %}
+                                    {% if search in task.task_title or search is None %}
+                                        {% include 'partials/task.html' %}
+                                    {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% empty %}
+                            <p colspan="3">No tasks available.</p>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
             
