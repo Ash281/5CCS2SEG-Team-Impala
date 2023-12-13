@@ -12,7 +12,7 @@ from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 
-from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm, CreateTeamForm
+from tasks.forms import LogInForm, PasswordForm, SearchTaskForm, UserForm, SignUpForm, CreateTeamForm
 from tasks.helpers import login_prohibited
 from tasks.models import User, Team
 
@@ -370,6 +370,7 @@ class TeamDashboardView(LoginRequiredMixin, View):
         team = get_object_or_404(Team, id=id)
         tasks = Task.objects.filter(team=team)
         filter_form = FilterTaskForm(request.GET)
+        search_form = SearchTaskForm(request.GET)
         priority_choices = {
             'high_priority': 'HI',
             'med_priority': 'MD',
@@ -390,6 +391,12 @@ class TeamDashboardView(LoginRequiredMixin, View):
             end_date = parse_date(end_date_filter)
         else:
             end_date = None
+
+        search_term = request.GET.get('search')
+        if search_term:
+            search = search_term
+        else:
+            search = None
         # You can add more context data as needed
         context = {
             'team_name': team.team_name,
@@ -400,8 +407,10 @@ class TeamDashboardView(LoginRequiredMixin, View):
             'tasks' : tasks,
             'priority' : priority,
             'filter_form' : filter_form,
+            'search_form' : search_form,
             'start_date' : start_date,
-            'end_date' : end_date
+            'end_date' : end_date,
+            'search' : search
             # Add more context data here
         }
 

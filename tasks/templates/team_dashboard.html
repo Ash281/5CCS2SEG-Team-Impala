@@ -92,9 +92,10 @@
             </form> -->
             
             <div>
-                <input type="text" name="search" placeholder="Search by task title" value="{{ request.GET.search }}">
+                <form type="get">
+                    {{ search_form }}
+                </form>
                 <button type="submit" class="btn btn-sm subheading-small">Search</button>
-
             </div>
         </div>
     </div>
@@ -111,7 +112,9 @@
                             {% if task.get_status_display == "Not Completed" %}
                                 {% if task.priority == priority or priority is None %}
                                     {% if task.due_date >= start_date and task.due_date <= end_date or start_date is None or end_date is None %}
-                                        {% include 'partials/task.html' %}
+                                        {% if search in task.task_title or search is None %}
+                                            {% include 'partials/task.html' %}
+                                        {% endif %}
                                     {% endif %}
                                 {% endif %}
                             {% endif %}
@@ -130,7 +133,9 @@
                             {% if task.get_status_display == "In Progress" %}
                                 {% if task.priority == priority or priority is None %}
                                     {% if task.due_date >= start_date and task.due_date <= end_date or start_date is None or end_date is None %}
+                                    {% if search in task.task_title or search is None %}
                                         {% include 'partials/task.html' %}
+                                    {% endif %}
                                     {% endif %}
                                 {% endif %}
                             {% endif %}
@@ -149,7 +154,9 @@
                             {% if task.get_status_display == "Completed" %}
                                 {% if task.priority == priority or priority is None %}
                                     {% if task.due_date >= start_date and task.due_date <= end_date or start_date is None or end_date is None %}
+                                    {% if search in task.task_title or search is None %}
                                         {% include 'partials/task.html' %}
+                                    {% endif %}
                                     {% endif %}
                                 {% endif %}
                             {% endif %}

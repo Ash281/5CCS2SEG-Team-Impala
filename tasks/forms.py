@@ -252,6 +252,11 @@ class FilterTaskForm(forms.Form):
     start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     end_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
 
+class SearchTaskForm(forms.Form):
+    """Form enabling users to search tasks."""
+
+    search = forms.CharField(max_length=100, required=False, label='', widget=forms.TextInput(attrs={'placeholder': 'Search for a task'}))
+
 class CreateTaskForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
