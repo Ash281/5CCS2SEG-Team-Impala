@@ -94,7 +94,7 @@
                 <h2 class="subheading-small">TODO</h2>
                 <ul class="list-unstyled">
                     {% for task in tasks %}
-                        {% if task.get_status_display == "Not Completed" and task.priority == priority %}
+                        {% if task.get_status_display == "Not Completed" and priority is None or task.priority == priority %}
                         {% include 'partials/task.html' %}
                         {% endif %}
                     {% empty %}

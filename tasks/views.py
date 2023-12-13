@@ -368,9 +368,13 @@ class TeamDashboardView(LoginRequiredMixin, View):
         priority_choices = {
             'high_priority': 'HI',
             'med_priority': 'MD',
-            'low_priority': 'LW'
+            'low_priority': 'LW',
         }
-        priority = priority_choices[request.GET.get('filter_by', 'due_date')]
+        priority_filter = request.GET.get('filter_by')
+        if priority_filter:
+            priority = priority_choices[priority_filter]
+        else:
+            priority = None
         # You can add more context data as needed
         context = {
             'team_name': team.team_name,
