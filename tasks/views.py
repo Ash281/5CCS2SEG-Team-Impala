@@ -107,8 +107,48 @@ def my_tasks(request):
     current_user = request.user
     user_teams = current_user.teams.all()
     tasks = Task.objects.filter(assignees=current_user.id)
+    priority_form = FilterPriorityForm(request.GET)
+    date_form = FilterDateRangeForm(request.GET)
+    search_form = SearchTaskForm(request.GET)
+    priority_choices = {
+            'high_priority': 'HI',
+            'med_priority': 'MD',
+            'low_priority': 'LW',
+        }
+    priority_filter = request.GET.get('filter_by_priority')
+    if priority_filter:
+        priority = priority_choices[priority_filter]
+    else:
+        priority = None
+    start_date_filter = request.GET.get('start_date')
+    end_date_filter = request.GET.get('end_date')
+    if start_date_filter:
+        start_date = parse_date(start_date_filter)
+    else:
+        start_date = None
+    if end_date_filter:
+        end_date = parse_date(end_date_filter)
+    else:
+        end_date = None
 
-    return render(request, 'my_tasks.html', {'user_teams': user_teams, 'user_tasks': tasks})
+    search_term = request.GET.get('search')
+    if search_term:
+        search = search_term
+    else:
+        search = None
+    context = (
+        {'user_teams': user_teams,
+        'user_tasks': tasks,
+        'priority_form': priority_form,
+        'date_form': date_form, 
+        'search_form': search_form,
+        'priority': priority,
+        'start_date': start_date,
+        'end_date': end_date,
+        'search': search}
+        )
+
+    return render(request, 'my_tasks.html', context)
 
 def task_detail(request, task_title):
     task = get_object_or_404(Task, pk=task_title)
