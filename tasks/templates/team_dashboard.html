@@ -44,15 +44,11 @@
         
         <div class="setting">
             <form method="get">
-                {{ filter_form.filter_by_priority }}
-                {{ filter_form.filter_by }}
-            
-                <div id="dateRange" style="display: none;">
-                    {{ filter_form.start_date }}
-                    {{ filter_form.end_date }}
-                </div>
-            
+                {{ priority_form }}
+                {{ date_form }}
                 <button class="btn btn-sm subheading-small" type="submit">Filter</button>
+                {{ search_form }}
+                <button class="btn btn-sm subheading-small" type="submit">Search</button>
             </form>            
 
         <!--     <form method="get">
@@ -88,13 +84,6 @@
             
                 <button class="btn btn-sm subheading-small" type="submit">Filter</button>
             </form> -->
-            
-            <div>
-                <form type="get">
-                    {{ search_form }}
-                    <button type="submit" class="btn btn-sm subheading-small">Search</button>
-                </form>
-            </div>
         </div>
     </div>
     

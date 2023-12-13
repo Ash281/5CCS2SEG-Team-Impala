@@ -222,35 +222,28 @@ class CreateTeamForm(forms.ModelForm):
             self.save_m2m()  
         return team
     
-class FilterTaskForm(forms.Form):
+class FilterDateRangeForm(forms.Form):
+    """Form enabling users to filter tasks."""
+
+    start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
+    end_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
+
+class FilterPriorityForm(forms.Form):
     """Form enabling users to filter tasks."""
 
     PRIORITY_CHOICES = [
-        ('', '--Select Priority--'),
+        ('', 'Select Priority'),
         ('high_priority', 'High Priority'),
         ('med_priority', 'Medium Priority'),
         ('low_priority', 'Low Priority'),
-    ]
-
-    FILTER_CHOICES = [
-        ('', '--Select Filter--'),
-        ('date_range', 'Date Range'),
     ]
 
     filter_by_priority = forms.ChoiceField(
         choices=PRIORITY_CHOICES,
         required=False,
         widget=forms.Select(attrs={'onchange': 'showDateRange(this.value)'}),
+        label=''
     )
-
-    filter_by = forms.ChoiceField(
-        choices=FILTER_CHOICES,
-        required=False,
-        widget=forms.Select(attrs={'onchange': 'showDateRange(this.value)'}),
-    )
-
-    start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
-    end_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
 
 class SearchTaskForm(forms.Form):
     """Form enabling users to search tasks."""
