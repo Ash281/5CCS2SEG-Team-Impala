@@ -11,7 +11,7 @@
                 {{ assignee.username }}{% if not forloop.last %}, {% endif %}
             {% endfor %}
         {% else %}
-            No assignees
+            Anyone
         {% endif %}
     </p>
     <p><strong>Due:</strong> {{ task.due_date }}

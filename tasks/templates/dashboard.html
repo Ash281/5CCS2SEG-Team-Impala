@@ -6,28 +6,20 @@
   <div class = "col-sm-12 col-md-5">
     <div class="card flex">
       <h2 class="cover-text">My Jelly Points</h2>
-      {% for task in first_three %}
       <div class="group">
-          <input type="checkbox" id="task_{{ task.task_title }}" />
-          <label for="task_{{ task.task_title }}">{{ task.task_title }}</label>
+          <h1>{{user.jelly_points}}</h1>
       </div>
-    {% empty %}
-      <p>No current tasks</p>
-    {% endfor %}
+
     </div>
   </div>
 
   <div class = "col-md-5">
     <div class="card">
       <h2 class="cover-text">Number of Tasks TODO</h2>
-      {% for task in next_three %}
       <div class="group">
-          <input type="checkbox" id="task_{{ task.task_title }}" />
-          <label for="task_{{ task.task_title }}">{{ task.task_title }}</label>
+        <h1>{{to_do_tasks}}</h1>
       </div>
-    {% empty %}
-      <p>No current tasks</p>
-    {% endfor %}
+
     </div>
   </div>
 </div>
@@ -35,28 +27,18 @@
   <div class = "col-sm-12 col-md-5">
     <div class="containers card">
       <h2 class="cover-text">Number of Tasks in Progress</h2>
-      {% for task in first_three %}
       <div class="group">
-          <input type="checkbox" id="task_{{ task.task_title }}" />
-          <label for="task_{{ task.task_title }}">{{ task.task_title }}</label>
+        <h1>{{in_progress}}</h1>
       </div>
-    {% empty %}
-      <p>No current tasks</p>
-    {% endfor %}
     </div>
   </div>
 
   <div class = "col-md-5">
     <div class="containers card">
       <h2 class="cover-text">Number of Tasks Done</h2>
-      {% for task in next_three %}
       <div class="group">
-          <input type="checkbox" id="task_{{ task.task_title }}" />
-          <label for="task_{{ task.task_title }}">{{ task.task_title }}</label>
+        <h1>{{done}}</h1>
       </div>
-    {% empty %}
-      <p>No current tasks</p>
-    {% endfor %}
     </div>
   </div>
 </div>

@@ -94,7 +94,7 @@
                 <h2 class="subheading-small">TODO</h2>
                 <ul class="list-unstyled">
                     {% for task in tasks %}
-                        {% if task.get_status_display == "Not Completed"%}
+                        {% if task.get_status_display == "Not Completed" and priority is None or task.priority == priority %}
                         {% include 'partials/task.html' %}
                         {% endif %}
                     {% empty %}
@@ -108,7 +108,7 @@
                 <h2 class="subheading-small">IN PROGRESS</h2>
                 <ul class="list-unstyled">
                     {% for task in tasks %}
-                        {% if task.get_status_display == "In Progress"%}
+                        {% if task.get_status_display == "In Progress" and task.priority == priority %}
                         {% include 'partials/task.html' %}
                         {% endif %}
                     {% empty %}
@@ -122,7 +122,7 @@
                 <h2 class="subheading-small">DONE</h2>
                 <ul class="list-unstyled">
                     {% for task in tasks %}
-                        {% if task.get_status_display == "Completed"%}
+                        {% if task.get_status_display == "Completed" and task.priority == priority %}
                         {% include 'partials/task.html' %}
                         <p>Task duration: {{ task.hours_spent }}</p>
                         {% endif %}

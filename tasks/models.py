@@ -5,7 +5,7 @@ from django.utils import timezone
 from datetime import timedelta
 from libgravatar import Gravatar
 
-from django.core.validators import MaxLengthValidator, MinLengthValidator
+from django.core.validators import MaxLengthValidator, MinLengthValidator, MaxValueValidator, MinValueValidator
 from django.db import IntegrityError
 
 import datetime
@@ -102,14 +102,16 @@ class Team(models.Model):
 
 class Task(models.Model):
     PRIORITY_CHOICES = [ ('HI', 'High'), ('MD', 'Medium'), ('LW', 'Low'), ]
-    STATUS_CHOICES = [ ('TODO', 'Not Completed'), ('IN_PROGREESS', 'In Progress'), ('DONE', 'Completed'), ]
+    STATUS_CHOICES = [ ('TODO', 'Not Completed'), ('IN_PROGRESS', 'In Progress'), ('DONE', 'Completed'), ]
 
     task_title = models.CharField(max_length = 50, default='', blank=False, unique=True, validators=[MinLengthValidator(3, message="Title must be a minimum of 3 characters")])
     task_description = models.CharField(max_length = 500, default='', blank=False,  validators=[MinLengthValidator(10, message="Description must be a minimum of 10 characters")])
     due_date = models.DateField(default=datetime.date.today, validators=[validate_not_past_date])
     created_at = models.DateTimeField(auto_now_add=True, editable=False, null=False)
-    hours_spent = models.CharField(max_length = 500, default='', blank=True)
-    jelly_points = models.IntegerField(blank=False, null=False, default=0)
+    hours_spent = models.CharField(max_length = 500, default='', blank=False)
+    jelly_points = models.IntegerField(blank=False, null=False, default=0,
+                                       validators=[MinValueValidator(1, message="Jelly points must be a minimum of 1"),
+                                       MaxValueValidator(50, message="Jelly points cannot exceed 50")])
     assignees = models.ManyToManyField(User, blank=True, related_name='assigned_tasks')
     priority = models.CharField(max_length=2, choices=PRIORITY_CHOICES, default='LW')
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
