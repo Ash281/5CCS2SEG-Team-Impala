@@ -1,5 +1,4 @@
 import datetime
-from django.shortcuts import redirect
 from django.test import TestCase
 from django.urls import reverse
 from tasks.forms import CreateTaskForm
@@ -51,7 +50,7 @@ class EditTaskTestCase(TestCase):
         response = self.client.post(self.url, data=self.form_input, task_title=self.task.task_title, follow=True)
         after_count = Task.objects.count()
         task = Task.objects.get(task_title="Task 1")
-        
+
         self.assertEqual(after_count, before_count)
         self.assertEqual(old_description, task.task_description)
         self.assertEqual(response.status_code, 200)
