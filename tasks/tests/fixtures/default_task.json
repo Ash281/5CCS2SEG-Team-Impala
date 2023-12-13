@@ -6,7 +6,7 @@
       "task_title": "Task 1",
       "task_description": "Using this for our website :)",
       "due_date": "2024-10-10",
-      "assignees": "xxxxx",
+      "assignees": ["@john_doe"],
       "priority": "LW" 
     }
   }
