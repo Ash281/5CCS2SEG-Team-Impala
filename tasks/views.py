@@ -440,15 +440,10 @@ class CreateTaskView(LoginRequiredMixin, View):
     """Display the dashboard for a specific team."""
 
     def get(self, request, id):
-        # Retrieve the team by id, or show a 404 error if not found
         team = get_object_or_404(Team, id=id)
-
-        # Initialize the form with team_id
-        form = CreateTaskForm(team_id=id)  # Change here
-
-        # Prepare the context data
+        form = CreateTaskForm(team_id=id)
         context = {
-            'form': form,  # Include the form in the context
+            'form': form,
             'team_name': team.team_name,
             'team_description': team.team_description,
             'members': team.members.all(),
@@ -461,7 +456,6 @@ class CreateTaskView(LoginRequiredMixin, View):
     def post(self, request, id):
         # Retrieve the team by id, or show a 404 error if not found
         team = get_object_or_404(Team, id=id)
-
         # Initialize the form with POST data and team_id
         form = CreateTaskForm(request.POST, team_id=id)  # Change here
 

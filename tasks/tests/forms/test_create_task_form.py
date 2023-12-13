@@ -73,7 +73,6 @@ class CreateTaskFormFormTestCase(TestCase):
         form.save()
         task = Task.objects.get(task_title='Test Task')
         self.form_input['status'] = "DONE"
-        # form = CreateTaskForm(instance=task, data=self.form_input, team_id=self.team.id)
         form.save()
         after_count1 = task.hours_spent
 
@@ -87,4 +86,4 @@ class CreateTaskFormFormTestCase(TestCase):
         form.save()
         after_count3 = task.hours_spent
         self.assertEquals(after_count1,after_count2)
-        self.assertNotEqual(after_count2,after_count3)
+        self.assertNotEqual(after_count1,after_count3)
