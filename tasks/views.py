@@ -382,7 +382,16 @@ class TeamDashboardView(LoginRequiredMixin, View):
         # Retrieve the team by id, or show a 404 error if not found
         team = get_object_or_404(Team, id=id)
         tasks = Task.objects.filter(team=team)
-
+        priority_choices = {
+            'high_priority': 'HI',
+            'med_priority': 'MD',
+            'low_priority': 'LW',
+        }
+        priority_filter = request.GET.get('filter_by')
+        if priority_filter:
+            priority = priority_choices[priority_filter]
+        else:
+            priority = None
         # You can add more context data as needed
         context = {
             'team_name': team.team_name,
@@ -390,7 +399,8 @@ class TeamDashboardView(LoginRequiredMixin, View):
             'members': team.members.all(),
             'created_at': team.created_at,
             'id': id,
-            'tasks' : tasks
+            'tasks' : tasks,
+            'priority' : priority
             # Add more context data here
         }
 
