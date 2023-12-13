@@ -4,10 +4,15 @@
     "pk": 2,
     "fields": {
       "task_title": "Task 2",
-      "task_description": "Using this for our website 2 :)",
-      "due_date": "2024-10-11",
-      "assignees": "xxxxx",
-      "priority": "LW" 
+      "task_description": "Second task of your model",
+      "due_date": "2024-10-10",
+      "created_at":"2023-01-01T12:00:00Z",
+      "hours_spent":"",
+      "jelly_points":"0",
+      "assignees": [1],
+      "priority": "LW",
+      "team":1,
+      "status": "TODO"
     }
   },
 
@@ -16,22 +21,32 @@
     "pk": 3,
     "fields": {
       "task_title": "Task 3",
-      "task_description": "Using this for our website 3 :)",
-      "due_date": "2024-10-12",
-      "assignees": "xxxxx",
-      "priority": "LW" 
+      "task_description": "Third task of our model",
+      "due_date": "2024-10-10",
+      "created_at":"2023-01-01T12:00:00Z",
+      "hours_spent":"",
+      "jelly_points":"0",
+      "assignees": [1],
+      "priority": "LW",
+      "team":1,
+      "status": "TODO"
     }
   },
-  
+
   {
     "model": "tasks.task",
     "pk": 4,
     "fields": {
       "task_title": "Task 4",
-      "task_description": "Using this for our website 4 :)",
-      "due_date": "2024-10-13",
-      "assignees": "xxxxx",
-      "priority": "LW"  
+      "task_description": "Forth task of our model",
+      "due_date": "2024-10-10",
+      "created_at":"2023-01-01T12:00:00Z",
+      "hours_spent":"",
+      "jelly_points":"0",
+      "assignees": [1],
+      "priority": "LW",
+      "team":1,
+      "status": "TODO"
     }
   }
 ]

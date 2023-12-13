@@ -1,7 +1,7 @@
 """Unit tests for the Task model."""
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from tasks.models import Task
+from tasks.models import Task, Team, User
 from django.utils import timezone
 from datetime import timedelta
 
@@ -9,12 +9,17 @@ class TaskTestCase(TestCase):
     """Unit tests for the Task model."""
 
     fixtures = [
+
+        'tasks/tests/fixtures/default_user.json',
+        'tasks/tests/fixtures/default_team.json',
         'tasks/tests/fixtures/default_task.json',
         'tasks/tests/fixtures/other_tasks.json'
     ]
 
     def setUp(self):
         self.task = Task.objects.get(task_title='Task 1')
+        self.user = User.objects.get(username='@johndoe')
+        self.team = Team.objects.get(team_name='Team Impala')
 
     def test_valid_task(self):
         self._assert_task_is_valid()
@@ -40,7 +45,7 @@ class TaskTestCase(TestCase):
         self._assert_task_is_invalid()
 
     def test_description_cannot_be_over_500_characters_long(self):
-        self.task.task_title = 'x' * 501
+        self.task.task_description = 'x' * 501
         self._assert_task_is_invalid()
 
     def test_title_must_be_unique(self):  
@@ -65,13 +70,15 @@ class TaskTestCase(TestCase):
         self.task.task_title = 'task 2'
         self._assert_task_is_valid()
 
-    def test_assignees_must_not_be_blank(self): # CHANGE BCOZ ASSIGNEES SHOULD BE TEAM MATES
-        self.task.assignees = ''
-        self._assert_task_is_invalid()
+    def test_assignees_can_be_blank(self): 
+        self.task.assignees.clear()
+        self.task.save()
+        self._assert_task_is_valid()
 
-    # def test_assignees_must_be_in_team(self): # CHANGE BCOZ ASSIGNEES SHOULD BE TEAM MATES
-    #     self.user.first_name = 'x' * 50
-    #     self._assert_user_is_valid()
+    def test_assignees_must_be_in_team(self):
+         
+        self.user.first_name = 'x' * 50
+        self._assert_user_is_valid()
 
     def test_due_date_cannot_be_before_today(self): 
         self.task.due_date = timezone.now().date() - timedelta(days=1)
