@@ -441,17 +441,18 @@ class CreateTaskView(LoginRequiredMixin, View):
         if form.is_valid():
             # Save the form and do any other necessary logic
             form.save()
-
+            return redirect('team_dashboard', id=id)
         # If the form is not valid, render the page with the form errors
-        context = {
-            'form': form,
-            'team_name': team.team_name,
-            'team_description': team.team_description,
-            'members': team.members.all(),
-            'created_at': team.created_at,
-            'id': id
-        }
-        return redirect('team_dashboard', id=id)
+        else:
+            context = {
+                'form': form,  # Include the form in the context
+                'team_name': team.team_name,
+                'team_description': team.team_description,
+                'members': team.members.all(),
+                'created_at': team.created_at,
+                'id': id
+            }
+            return render(request, 'edit_task.html', context)
     
 class RemoveMembersView(LoginRequiredMixin, View):
     """View to display a page for removing members from a team."""
