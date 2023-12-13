@@ -242,7 +242,6 @@ class CreateTaskForm(forms.ModelForm):
             existing_assignees = task.assignees.all()
             selected_users = [user for user in self.cleaned_data['assignees'] if user not in existing_assignees]
             print("Selected users", selected_users)
-
             task.save()
             task.assignees.set(selected_users)  # Set the assignees to the selected users
             task.save()
