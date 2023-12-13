@@ -124,31 +124,27 @@ def task_detail(request, task_title):
     return render(request, 'task_detail.html', {'task': task})
 
 
-def edit_task(request, task_title):
-    task = get_object_or_404(Task, task_title=task_title)
-    team = get_object_or_404(Team, id=task.team.id)
-    print(team.members.all())
-    if request.method == 'POST':
+class EditTaskView(LoginRequiredMixin, View):
+    template_name = "edit_task.html"
+
+    def get(self, request, task_title):
+        task, team = self.get_task_and_team(task_title)
+        form = CreateTaskForm(team_id=team.id, instance=task)
+        return render(request, self.template_name, {'form': form, 'task': task, 'members':team.members.all()})
+
+    def post(self, request, task_title):
+        task, team = self.get_task_and_team(task_title)
         form = CreateTaskForm(request.POST, team_id=team.id, instance=task)
         if form.is_valid():
             form.save()
-            return redirect('team_dashboard', id=task.team.id) 
-    else:
-        form = CreateTaskForm(team_id=team.id, instance=task)
-    return render(request, 'edit_task.html', {'form': form, 'task': task, 'members':team.members.all()})
-
-
-@require_POST
-def mark_task_complete(request, task_title):
-    task = get_object_or_404(Task, task_title=task_title)
-    days = int(request.POST.get('days', 0))
-    hours_per_day = int(request.POST.get('hours', 0))
-    total_hours_spent = days * hours_per_day
-    task.status = 'COMPLETED'
-    task.hours_spent = total_hours_spent
-    task.save()
-    return render(request, 'task_detail.html', {'task': task})
-
+            return redirect('team_dashboard', id=task.team.id)
+        return render(request, self.template_name, {'form': form, 'task': task, 'members':team.members.all()})
+    
+    def get_task_and_team(self, task_title):
+        task = get_object_or_404(Task, task_title=task_title)
+        team = get_object_or_404(Team, id=task.team.id)
+        return task, team
+    
 def delete_task(request, task_title):
     task = get_object_or_404(Task, task_title=task_title)
     id = task.team.id
