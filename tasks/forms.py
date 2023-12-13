@@ -225,10 +225,9 @@ class CreateTeamForm(forms.ModelForm):
 class CreateTaskForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
-        self.team_id = kwargs.pop('team_id')
+        self.team_id = kwargs.pop('team_id', None)
         super(CreateTaskForm, self).__init__(*args, **kwargs)
 
-        print(f"My team my {self.team_id}")
         if self.team_id:
             self.fields['assignees'].queryset = User.objects.filter(teams__id=self.team_id)
         else:
