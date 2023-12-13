@@ -43,8 +43,21 @@
         </div>
         
         <div class="setting">
-
             <form method="get">
+                {{ filter_form.filter_by_priority }}
+                {{ filter_form.filter_by }}
+            
+                <div id="dateRange" style="display: none;">
+                    {{ filter_form.start_date }}
+                    {{ filter_form.end_date }}
+                </div>
+            
+                <button class="btn btn-sm subheading-small" type="submit">Filter</button>
+            </form>            
+    
+        <button class="btn btn-sm subheading-small" type="submit">Filter</button>
+
+        <!--     <form method="get">
                 <label for="sort_by">Sort by:</label>
                 <select name="sort_by" id="sort_by" onchange="this.form.submit()">
                     <option value="due_date" {% if sort_by == "due_date" %}selected{% endif %}>Due Date</option>
@@ -76,7 +89,7 @@
                 </div>
             
                 <button class="btn btn-sm subheading-small" type="submit">Filter</button>
-            </form>
+            </form> -->
             
             <div>
                 <input type="text" name="search" placeholder="Search by task title" value="{{ request.GET.search }}">

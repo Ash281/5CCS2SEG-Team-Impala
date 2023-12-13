@@ -21,7 +21,7 @@ from .models import Task
 from django.views.decorators.http import require_POST
 from django.utils.dateparse import parse_date
 
-from tasks.forms import LogInForm, NewPasswordMixin, PasswordForm, EmailVerificationForm, UserForm, SignUpForm, InviteMemberForm
+from tasks.forms import LogInForm, NewPasswordMixin, PasswordForm, EmailVerificationForm, UserForm, SignUpForm, InviteMemberForm, FilterTaskForm
 from tasks.helpers import login_prohibited
 from .models import User
 
@@ -365,12 +365,13 @@ class TeamDashboardView(LoginRequiredMixin, View):
         # Retrieve the team by id, or show a 404 error if not found
         team = get_object_or_404(Team, id=id)
         tasks = Task.objects.filter(team=team)
+        filter_form = FilterTaskForm(request.GET)
         priority_choices = {
             'high_priority': 'HI',
             'med_priority': 'MD',
             'low_priority': 'LW',
         }
-        priority_filter = request.GET.get('filter_by')
+        priority_filter = request.GET.get('filter_by_priority')
         if priority_filter:
             priority = priority_choices[priority_filter]
         else:
@@ -383,7 +384,8 @@ class TeamDashboardView(LoginRequiredMixin, View):
             'created_at': team.created_at,
             'id': id,
             'tasks' : tasks,
-            'priority' : priority
+            'priority' : priority,
+            'filter_form' : filter_form
             # Add more context data here
         }
 
