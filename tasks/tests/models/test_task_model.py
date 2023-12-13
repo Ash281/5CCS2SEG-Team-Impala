@@ -169,23 +169,8 @@ class TaskTestCase(TestCase):
         self.task.jelly_points = 51
         self._assert_task_is_invalid()
 
-    def test_task_hours_spent_is_set_when_completed(self):
-        before_time_duration = self.task.hours_spent
-        self.task.status = "DONE"
-        self.task.save()
-        after_time_duration = self.task.hours_spent
-        print("After tiem duration: ")
-        print(after_time_duration)
-        self.assertNotEquals(before_time_duration, after_time_duration)
-        self.assertIsNotNone(after_time_duration)
-
-
-        self._assert_task_is_invalid()
-    def test_task_hours_spent_is_updated_when_recompleted(self):
-        self.task.hours_spent = ''
-        self._assert_task_is_invalid()
     def test_task_created_at_cannot_be_null(self):
-        self.task.hours_spent = None
+        self.task.created_at = None
         self._assert_task_is_invalid()
 
 

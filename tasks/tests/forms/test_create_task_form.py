@@ -23,7 +23,7 @@ class CreateTaskFormFormTestCase(TestCase):
             "jelly_points":"1",
             "assignees": [1],
             "priority": "LW",
-            "status": "TODO"
+            "status": "IN_PROGRESS"
         }
 
 
@@ -54,6 +54,37 @@ class CreateTaskFormFormTestCase(TestCase):
         after_count = Task.objects.count()
         self.assertEqual(after_count, before_count)
         self.assertEqual(task.task_title, 'Test Task')
-        self.assertEqual(task.task_description, 'Using this for our website 2 :)')
-        self.assertEqual(task.due_date, datetime.date(2023, 11, 23))
-   
+        self.assertEqual(task.task_description, 'Using this for our website :)')
+        self.assertEqual(task.due_date, datetime.date(2024, 10, 10))
+
+    def test_task_hours_spent_is_set_when_completed(self):
+    
+        form = CreateTaskForm(data=self.form_input, team_id=self.team.id)
+        form.save()
+        task = Task.objects.get(task_title='Test Task')
+        self.form_input['status'] = "DONE"
+        form = CreateTaskForm(instance=task, data=self.form_input, team_id=self.team.id)
+        form.save()
+        after_count = task.hours_spent
+        self.assertNotEqual(after_count, "")
+
+    def test_task_hours_spent_is_updated_when_recompleted(self):
+        form = CreateTaskForm(data=self.form_input, team_id=self.team.id)
+        form.save()
+        task = Task.objects.get(task_title='Test Task')
+        self.form_input['status'] = "DONE"
+        # form = CreateTaskForm(instance=task, data=self.form_input, team_id=self.team.id)
+        form.save()
+        after_count1 = task.hours_spent
+
+        self.form_input['status'] = "IN_PROGRESS"
+        form = CreateTaskForm(instance=task, data=self.form_input, team_id=self.team.id)
+        form.save()
+        after_count2 = task.hours_spent
+
+        self.form_input['status'] = "DONE"
+        form = CreateTaskForm(instance=task, data=self.form_input, team_id=self.team.id)
+        form.save()
+        after_count3 = task.hours_spent
+        self.assertEquals(after_count1,after_count2)
+        self.assertNotEqual(after_count2,after_count3)
