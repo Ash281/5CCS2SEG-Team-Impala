@@ -118,13 +118,6 @@ def my_tasks(request):
 
     return render(request, 'my_tasks.html', {'user_teams': user_teams, 'user_tasks': tasks})
 
-def num_of_tasks(request):
-    current_user = request.user
-    user_teams = current_user.teams.all()
-    tasks = Task.objects.filter(assignees=current_user.id)
-    todo_tasks_count = tasks.filter(status="TODO").count()
-    
-    return render(request, 'dashboard.html', {'user_teams': user_teams, 'user_tasks': tasks})
 
 def task_detail(request, task_title):
     task = get_object_or_404(Task, pk=task_title)
