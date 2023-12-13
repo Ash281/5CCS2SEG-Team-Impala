@@ -33,9 +33,18 @@ def dashboard(request):
     first_three = Task.objects.order_by('due_date')[:3]
     next_three = Task.objects.order_by('due_date')[3:6]
     user_teams = current_user.teams.all()
+    tasks = Task.objects.filter(assignees=current_user.id)
+    todo_tasks_count = 0
+    in_progress = 0
+    complete_tasks = 0
+    for i in tasks.filter(status="TODO"):
+        todo_tasks_count += 1
+    for i in tasks.filter(status="IN_PROGRESS"):
+        in_progress += 1
+    for i in tasks.filter(status="DONE"):
+        complete_tasks += 1
 
-
-    return render(request, 'dashboard.html', {'user': current_user, 'first_three': first_three, 'next_three': next_three, 'user_teams': user_teams})
+    return render(request, 'dashboard.html', {'user': current_user, 'first_three': first_three, 'next_three': next_three, 'user_teams': user_teams,'to_do_tasks':todo_tasks_count,'in_progress' : in_progress, 'done' : complete_tasks})
 
 
 @login_prohibited
@@ -108,6 +117,14 @@ def my_tasks(request):
     tasks = Task.objects.filter(assignees=current_user.id)
 
     return render(request, 'my_tasks.html', {'user_teams': user_teams, 'user_tasks': tasks})
+
+def num_of_tasks(request):
+    current_user = request.user
+    user_teams = current_user.teams.all()
+    tasks = Task.objects.filter(assignees=current_user.id)
+    todo_tasks_count = tasks.filter(status="TODO").count()
+    
+    return render(request, 'dashboard.html', {'user_teams': user_teams, 'user_tasks': tasks})
 
 def task_detail(request, task_title):
     task = get_object_or_404(Task, pk=task_title)

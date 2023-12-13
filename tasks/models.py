@@ -102,7 +102,7 @@ class Team(models.Model):
 
 class Task(models.Model):
     PRIORITY_CHOICES = [ ('HI', 'High'), ('MD', 'Medium'), ('LW', 'Low'), ]
-    STATUS_CHOICES = [ ('TODO', 'Not Completed'), ('IN_PROGREESS', 'In Progress'), ('DONE', 'Completed'), ]
+    STATUS_CHOICES = [ ('TODO', 'Not Completed'), ('IN_PROGRESS', 'In Progress'), ('DONE', 'Completed'), ]
 
     task_title = models.CharField(max_length = 50, default='', blank=False, unique=True, validators=[MinLengthValidator(3, message="Title must be a minimum of 3 characters")])
     task_description = models.CharField(max_length = 500, default='', blank=False,  validators=[MinLengthValidator(10, message="Description must be a minimum of 10 characters")])
