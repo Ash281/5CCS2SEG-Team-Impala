@@ -44,7 +44,7 @@ urlpatterns = [
 
     path('tasks/<str:task_title>/', views.task_detail, name='task_detail'),
     path('tasks/edit/<str:task_title>/', views.EditTaskView.as_view(), name='edit_task'),
-    path('tasks/delete/<str:task_title>/', views.delete_task, name='delete_task'),
+    path('tasks/delete/<str:task_title>/', views.DeleteTaskView.as_view(), name='delete_task'),
 
     path('my_teams/', views.my_teams, name='my_teams'),
     path('my_tasks/', views.my_tasks, name='my_tasks')

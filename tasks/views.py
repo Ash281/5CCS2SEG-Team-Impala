@@ -145,11 +145,12 @@ class EditTaskView(LoginRequiredMixin, View):
         team = get_object_or_404(Team, id=task.team.id)
         return task, team
     
-def delete_task(request, task_title):
-    task = get_object_or_404(Task, task_title=task_title)
-    id = task.team.id
-    task.delete()
-    return redirect('team_dashboard', id=id)
+class DeleteTaskView(LoginRequiredMixin, View):
+    def get(self, request, task_title):
+        task = get_object_or_404(Task, task_title=task_title)
+        id = task.team.id
+        task.delete()
+        return redirect('team_dashboard', id=id)
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
