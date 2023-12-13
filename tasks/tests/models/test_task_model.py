@@ -100,7 +100,7 @@ class TaskTestCase(TestCase):
 
     def test_task_status_can_be_in_progress(self):
         valid_status_choices = [status[0] for status in Task.STATUS_CHOICES]
-        my_status = 'IN_PROGREESS'
+        my_status = 'IN_PROGRESS'
         self.assertIn(my_status, valid_status_choices)
         self.task.status = my_status
         self.task.save()
@@ -170,7 +170,16 @@ class TaskTestCase(TestCase):
         self._assert_task_is_invalid()
 
     def test_task_hours_spent_is_set_when_completed(self):
-        self.task.hours_spent = ''
+        before_time_duration = self.task.hours_spent
+        self.task.status = "DONE"
+        self.task.save()
+        after_time_duration = self.task.hours_spent
+        print("After tiem duration: ")
+        print(after_time_duration)
+        self.assertNotEquals(before_time_duration, after_time_duration)
+        self.assertIsNotNone(after_time_duration)
+
+
         self._assert_task_is_invalid()
     def test_task_hours_spent_is_updated_when_recompleted(self):
         self.task.hours_spent = ''

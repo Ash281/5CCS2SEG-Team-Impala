@@ -108,7 +108,7 @@ class Task(models.Model):
     task_description = models.CharField(max_length = 500, default='', blank=False,  validators=[MinLengthValidator(10, message="Description must be a minimum of 10 characters")])
     due_date = models.DateField(default=datetime.date.today, validators=[validate_not_past_date])
     created_at = models.DateTimeField(auto_now_add=True, editable=False, null=False)
-    hours_spent = models.CharField(max_length = 500, default='', blank=False)
+    hours_spent = models.CharField(max_length = 500, default='', blank=True)
     jelly_points = models.IntegerField(blank=False, null=False, default=0,
                                        validators=[MinValueValidator(1, message="Jelly points must be a minimum of 1"),
                                        MaxValueValidator(50, message="Jelly points cannot exceed 50")])
