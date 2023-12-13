@@ -50,40 +50,6 @@
                 {{ search_form }}
                 <button class="btn btn-sm subheading-small" type="submit">Search</button>
             </form>            
-
-        <!--     <form method="get">
-                <label for="sort_by">Sort by:</label>
-                <select name="sort_by" id="sort_by" onchange="this.form.submit()">
-                    <option value="due_date" {% if sort_by == "due_date" %}selected{% endif %}>Due Date</option>
-                    <option value="priority" {% if sort_by == "priority" %}selected{% endif %}>Priority</option>
-                    <option value="status" {% if sort_by == "status" %}selected{% endif %}>Status</option>
-                    <option value="task_title" {% if sort_by == "task_title" %}selected{% endif %}>Title</option>
-                </select>
-            </form>
-            
-            <form method="get">
-                <label for="filter_by">Filter by:</label>
-                <select name="filter_by" id="filter_by" onchange="showDateRange(this.value)">
-                    <option value="">--Select Filter--</option>
-                    <option value="high_priority" {% if filter_by == "high_priority" %}selected{% endif %}>High Priority</option>
-                    <option value="med_priority" {% if filter_by == "med_priority" %}selected{% endif %}>Medium Priority</option>
-                    <option value="low_priority" {% if filter_by == "low_priority" %}selected{% endif %}>Low Priority</option>
-                    <option value="comp_status" {% if filter_by == "comp_status" %}selected{% endif %}>Complete</option>
-                    <option value="incomp_status" {% if filter_by == "incomp_status" %}selected{% endif %}>Incomplete</option>
-                    <option value="date_range">Date Range</option>
-                </select>
-            
-                Hidden date range inputs
-                <div id="dateRange" style="display: none;">
-                    <label for="start_date">Start Date:</label>
-                    <input type="date" id="start_date" name="start_date">
-            
-                    <label for="end_date">End Date:</label>
-                    <input type="date" id="end_date" name="end_date">
-                </div>
-            
-                <button class="btn btn-sm subheading-small" type="submit">Filter</button>
-            </form> -->
         </div>
     </div>
     
@@ -157,13 +123,7 @@
         </div>
     </div>
     
-    </div>
-
-    <!-- Additional Sections -->
-    <!-- Here you can add more sections like 'Upcoming Events', 'Recent Achievements', etc. -->
-   
-    
-
+    </div>  
 
 </div>
 {% endblock %}
