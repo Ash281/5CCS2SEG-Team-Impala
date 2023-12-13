@@ -266,9 +266,8 @@ class CreateTaskForm(forms.ModelForm):
             'task_description': 'Task description',
             'due_date': 'Due date', 
             'priority': 'Priority',
-            'status': 'Status'
-        
+            'status': 'Status',
+            'jelly_points': 'Jelly points'
         }
         widgets = { 'task_description': forms.Textarea(), 'due_date': forms.DateInput(attrs={'type': 'date'})}
-
     

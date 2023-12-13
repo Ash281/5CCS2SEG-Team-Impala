@@ -33,9 +33,18 @@ def dashboard(request):
     first_three = Task.objects.order_by('due_date')[:3]
     next_three = Task.objects.order_by('due_date')[3:6]
     user_teams = current_user.teams.all()
+    tasks = Task.objects.filter(assignees=current_user.id)
+    todo_tasks_count = 0
+    in_progress = 0
+    complete_tasks = 0
+    for i in tasks.filter(status="TODO"):
+        todo_tasks_count += 1
+    for i in tasks.filter(status="IN_PROGRESS"):
+        in_progress += 1
+    for i in tasks.filter(status="DONE"):
+        complete_tasks += 1
 
-
-    return render(request, 'dashboard.html', {'user': current_user, 'first_three': first_three, 'next_three': next_three, 'user_teams': user_teams})
+    return render(request, 'dashboard.html', {'user': current_user, 'first_three': first_three, 'next_three': next_three, 'user_teams': user_teams,'to_do_tasks':todo_tasks_count,'in_progress' : in_progress, 'done' : complete_tasks})
 
 
 @login_prohibited
@@ -108,6 +117,14 @@ def my_tasks(request):
     tasks = Task.objects.filter(assignees=current_user.id)
 
     return render(request, 'my_tasks.html', {'user_teams': user_teams, 'user_tasks': tasks})
+
+def num_of_tasks(request):
+    current_user = request.user
+    user_teams = current_user.teams.all()
+    tasks = Task.objects.filter(assignees=current_user.id)
+    todo_tasks_count = tasks.filter(status="TODO").count()
+    
+    return render(request, 'dashboard.html', {'user_teams': user_teams, 'user_tasks': tasks})
 
 def task_detail(request, task_title):
     task = get_object_or_404(Task, pk=task_title)
@@ -365,7 +382,16 @@ class TeamDashboardView(LoginRequiredMixin, View):
         # Retrieve the team by id, or show a 404 error if not found
         team = get_object_or_404(Team, id=id)
         tasks = Task.objects.filter(team=team)
-
+        priority_choices = {
+            'high_priority': 'HI',
+            'med_priority': 'MD',
+            'low_priority': 'LW',
+        }
+        priority_filter = request.GET.get('filter_by')
+        if priority_filter:
+            priority = priority_choices[priority_filter]
+        else:
+            priority = None
         # You can add more context data as needed
         context = {
             'team_name': team.team_name,
@@ -373,7 +399,8 @@ class TeamDashboardView(LoginRequiredMixin, View):
             'members': team.members.all(),
             'created_at': team.created_at,
             'id': id,
-            'tasks' : tasks
+            'tasks' : tasks,
+            'priority' : priority
             # Add more context data here
         }
 
@@ -441,17 +468,18 @@ class CreateTaskView(LoginRequiredMixin, View):
         if form.is_valid():
             # Save the form and do any other necessary logic
             form.save()
-
+            return redirect('team_dashboard', id=id)
         # If the form is not valid, render the page with the form errors
-        context = {
-            'form': form,
-            'team_name': team.team_name,
-            'team_description': team.team_description,
-            'members': team.members.all(),
-            'created_at': team.created_at,
-            'id': id
-        }
-        return redirect('team_dashboard', id=id)
+        else:
+            context = {
+                'form': form,  # Include the form in the context
+                'team_name': team.team_name,
+                'team_description': team.team_description,
+                'members': team.members.all(),
+                'created_at': team.created_at,
+                'id': id
+            }
+            return render(request, 'edit_task.html', context)
     
 class RemoveMembersView(LoginRequiredMixin, View):
     """View to display a page for removing members from a team."""
