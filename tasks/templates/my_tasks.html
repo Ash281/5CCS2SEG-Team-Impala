@@ -1,67 +1,62 @@
 {% extends 'base_content.html' %}
 {% block main_content %}
-
- 
-
-  
-    <div class="row">
-      <div class="setting">
-        <form method="get">
-          {{ priority_form }}
-          {{ date_form }}
-          <button class="btn btn-sm subheading-small" type="submit">Filter</button>
-          {{ search_form }}
-          <button class="btn btn-sm subheading-small" type="submit">Search</button>
-        </form>            
-      </div>
-      {% for team in user_teams %}
-        <div class="col-sm-12 col-lg-4">
-            <div class=" card task-card">
-            <h2 class="subheading-small">
-                <a href="{% url 'team_dashboard' id=team.id%}">
-                <p class="p-2"> {{ team.team_name}} </p>
-                </a>
-                <p> {{team.team_description}} </p>
-            </h2>
-            <ul class="list-unstyled">
-                {% for task in user_tasks %}
-                    {% if task.team.id == team.id %}
-                      {% if task.priority == priority or priority is None %}
-                        {% if task.due_date >= start_date and task.due_date <= end_date or start_date is None or end_date is None %}
-                          {% if search in task.task_title or search is None %}
-                            {% if task.get_status_display != "Completed" %}
-                              <div class="task">
-                                <p class="clickable-cell">
-                                  <div>
-                                    <a href="{% url 'task_detail' task_title=task.id %}">
-                                        <strong>{{ task.task_title }}: </strong>
-                                    </a>
-                                  </div>
-                                    {{ task.task_description }}
-                                </p>
-                                <p>
-                                  <strong>Due:</strong> {{ task.due_date }}
-                                  <strong>Priority:</strong> {{ task.get_priority_display }}
-                                </p>
-                                <p>
-                                  <strong>Status:</strong> {{ task.get_status_display }}
-                                </p>
-                              </div>
-                            {% endif %}
+  <div class="row">
+    <div class="setting">
+      <form method="get">
+        {{ priority_form }}
+        {{ date_form }}
+        <button class="btn btn-sm subheading-small" type="submit">Filter</button>
+        {{ search_form }}
+        <button class="btn btn-sm subheading-small" type="submit">Search</button>
+      </form>            
+    </div>
+    {% for team in user_teams %}
+      <div class="col-sm-12 col-lg-4">
+          <div class=" card task-card">
+          <h2 class="subheading-small">
+              <a href="{% url 'team_dashboard' id=team.id%}">
+              <p class="p-2"> {{ team.team_name}} </p>
+              </a>
+              <p> {{team.team_description}} </p>
+          </h2>
+          <ul class="list-unstyled">
+              {% for task in user_tasks %}
+                  {% if task.team.id == team.id %}
+                    {% if task.priority == priority or priority is None %}
+                      {% if task.due_date >= start_date and task.due_date <= end_date or start_date is None or end_date is None %}
+                        {% if search in task.task_title or search is None %}
+                          {% if task.get_status_display != "Completed" %}
+                            <div class="task">
+                              <p class="clickable-cell">
+                                <div>
+                                  <a href="{% url 'task_detail' task_title=task.id %}">
+                                      <strong>{{ task.task_title }}: </strong>
+                                  </a>
+                                </div>
+                                  {{ task.task_description }}
+                              </p>
+                              <p>
+                                <strong>Due:</strong> {{ task.due_date }}
+                                <strong>Priority:</strong> {{ task.get_priority_display }}
+                              </p>
+                              <p>
+                                <strong>Status:</strong> {{ task.get_status_display }}
+                              </p>
+                            </div>
                           {% endif %}
                         {% endif %}
                       {% endif %}
                     {% endif %}
-                    
-                {% empty %}
-                    <p colspan="3">No tasks available.</p>
-                {% endfor %}
-            </ul>
-            </div>
-        </div>
+                  {% endif %}
+                  
+              {% empty %}
+                  <p colspan="3">No tasks available.</p>
+              {% endfor %}
+          </ul>
+          </div>
+      </div>
     {% empty %}
     <p colspan="3">You do not belong to any teams! .</p>
     {% endfor %}
   </div>
-  
 {% endblock %}
