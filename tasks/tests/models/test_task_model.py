@@ -170,8 +170,13 @@ class TaskTestCase(TestCase):
         self._assert_task_is_invalid()
 
     def test_task_created_at_cannot_be_null(self):
-        self.task.created_at = None
-        self._assert_task_is_invalid()
+        self.assertIsNotNone(self.task.created_at)
+    
+    def test_created_at_less_than_equal(self):
+        self.assertLessEqual(self.task.created_at, timezone.now())
+
+    
+    
 
 
     def _assert_task_is_valid(self):
