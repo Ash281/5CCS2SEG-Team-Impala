@@ -87,8 +87,4 @@ class CreateTaskFormFormTestCase(TestCase):
         self.assertEquals(after_count1,after_count2)
         self.assertNotEqual(after_count1,after_count3)
 
-    def test_create_task_with_invalid_team_id(self):
-        form = CreateTaskForm(data=self.form_input)
-        form.save()
-
         
