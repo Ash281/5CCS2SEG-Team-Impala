@@ -516,6 +516,10 @@ class RemoveMembersView(LoginRequiredMixin, View):
 
         members_to_remove_ids = request.POST.getlist('members_to_remove')
 
+        if not members_to_remove_ids:
+            messages.add_message(request, messages.WARNING, "No members selected.")
+            return render(request, self.template_name, {'team': team})
+
         for member_id in members_to_remove_ids:
             member_to_remove = get_object_or_404(User, id=member_id)
             if member_to_remove in team.members.all():
