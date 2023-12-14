@@ -4,7 +4,7 @@
     {% if user.is_authenticated %}
     <ul class="list-unstyled vcenter-item mt-2">
       <li style="margin-left:10px;"><a href={% url 'dashboard' %}>Dashboard</a></li>
-      <li style="margin-left:10px;"><a href='#'>My Tasks</a></li>
+      <li style="margin-left:10px;"><a href={% url 'my_tasks' %}>My Tasks</a></li>
       <li style="margin-left:10px;"><a href={% url 'my_teams' %}>My Teams</a></li>
       <li style="margin-left:10px;"><a href={% url 'create_team' %}>Create Team</a></li>
     </ul>

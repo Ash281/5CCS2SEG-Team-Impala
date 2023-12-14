@@ -36,6 +36,8 @@ urlpatterns = [
     path('team/<int:team_id>/add_members/', views.AddMembersView.as_view(), name='add_members'),
     path('email_verify/', views.EmailVerification.as_view(), name='email_verify'),
     path('join_team/<uuid:token>/', views.JoinTeamView.as_view(), name='join_team'),
+    path('leave_team/<int:id>/', views.LeaveTeamView.as_view(), name='leave_team'),
+    path('team/<int:id>/delete/', views.DeleteTeamView.as_view(), name='delete_team'),
 
     path('create_task/<int:id>/', views.CreateTaskView.as_view(), name='create_task'),
     # path('task_list/', views.task_list, name='task_list'),
@@ -43,7 +45,10 @@ urlpatterns = [
     path('tasks/<str:task_title>/', views.task_detail, name='task_detail'),
     path('tasks/edit/<str:task_title>/', views.edit_task, name='edit_task'),
     path('tasks/complete/<str:task_title>/', views.mark_task_complete, name='mark_task_complete'),
+    path('tasks/delete/<str:task_title>/', views.delete_task, name='delete_task'),
 
     path('my_teams/', views.my_teams, name='my_teams'),
+    path('my_tasks/', views.my_tasks, name='my_tasks'),
+    path('num_tasks/', views.num_of_tasks, name='num_of_tasks')
 
 ]

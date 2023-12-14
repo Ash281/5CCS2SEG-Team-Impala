@@ -58,7 +58,6 @@ class UserModelTestCase(TestCase):
     def test_username_must_contain_only_one_at(self):
         self.user.username = '@@johndoe'
         self._assert_user_is_invalid()
-    
 
     ### Test first name field ###
 
@@ -128,12 +127,25 @@ class UserModelTestCase(TestCase):
     def test_email_must_not_contain_more_than_one_at(self):
         self.user.email = 'johndoe@@example.org'
         self._assert_user_is_invalid()
+    
+    def test_email_valid_format(self):
+        self.user.email = "johndoe@example.org"
+        self._assert_user_is_valid()
+    
+    def test_email_invalid_format(self):
+        self.user.email = "invalid_email"
+        self._assert_user_is_invalid()
 
     ### Test full name method ###
 
     def test_full_name_must_be_correct(self):
         full_name = self.user.full_name()
         self.assertEqual(full_name, "John Doe")
+    
+    def test_full_name_with_special_characters(self):
+        self.user.first_name = 'Namé'
+        self.user.last_name = 'Surñame'
+        self.assertEqual(self.user.full_name(), 'Namé Surñame')
 
     ### Test email verification token field ###
 
@@ -171,9 +183,28 @@ class UserModelTestCase(TestCase):
         self.assertEqual(actual_gravatar_url, expected_gravatar_url)
 
     def _gravatar_url(self, size):
-        gravatar_url = f"{UserModelTestCase.GRAVATAR_URL}?size={size}&default=mp"
+        gravatar_url = f"{UserModelTestCase.GRAVATAR_URL}?size={size}&default=identicon"
         return gravatar_url
 
+    ### Test jelly points field ###
+    def test_jelly_points_default_is_zero(self):
+        self.assertEqual(self.user.jelly_points, 0)
+
+    def test_jelly_points_can_be_zero(self):
+        self.user.jelly_points = 0
+        self._assert_user_is_valid()
+
+    def test_jelly_points_can_be_positive(self):
+        self.user.jelly_points = 1
+        self._assert_user_is_valid()
+    
+    def test_jelly_points_cannot_be_negative(self):
+        self.user.jelly_points = -1
+        self._assert_user_is_invalid()
+    
+    def test_jelly_points_cannot_be_null(self):
+        self.user.jelly_points = None
+        self._assert_user_is_invalid()
 
     def _assert_user_is_valid(self):
         try:

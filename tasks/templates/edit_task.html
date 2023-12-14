@@ -2,15 +2,21 @@
 
 {% block main_content %}
 
-<form method="post">
-    {% csrf_token %}
-    {% include 'partials/bootstrap_form.html' with form=form %}
-    <p><input type="submit" value="Save Changes" class="btn btn-lg btn-secondary"> </p>
-  </form>
-  
-  <!-- <form action="{% url 'mark_task_complete' task.task_title %}" method="post" >
-    {% csrf_token %}
-    <p><input type="submit" value="Mark as Complete" class="btn btn-lg btn-secondary"></p>
-  </form> -->
-
+  <div class="container">
+    <div class="row">
+      <div class="vcenter-item">
+        <div class="text-center">
+        <h1>Editing Task</h1>
+        <div class="card">
+        <form method="post">
+          {% csrf_token %}
+          {% include 'partials/bootstrap_form.html' with form=form %}
+          <input type="submit" value="Save" class="btn btn-primary">
+        </form>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    
 {% endblock %}

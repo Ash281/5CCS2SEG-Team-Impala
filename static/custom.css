@@ -95,6 +95,16 @@ h2.medium-font{
   line-height: 1.2; 
 }
 
+.subheading-small a {
+  color: black;
+  text-decoration: none;
+}
+
+.subheading-small a :hover {
+  background-color: white;
+  border-radius: 1rem;
+  transition-duration: 0.7s;
+}
 
 .cover-text p {
   font-size: 1.2rem;
@@ -130,7 +140,6 @@ h2.medium-font{
   height: 70vh;
   overflow-y: scroll;
   display: flex;
-  scrollbar-width: thin;
 }
 
 .cover-card {
@@ -339,8 +348,33 @@ h3.profile-title {
  #bg-content {
   margin: 0;
   padding: 0;
-  background: url('/static/bg.jpeg') center center/cover no-repeat;
+  background: url('/static/Bg-Jelly.png') center center/cover no-repeat;
   height: 100vh; 
   display: flex;
   flex-direction: column;
 } 
+
+.form-control[multiple] {
+  height : auto
+}
+
+.form-control[multiple] option:checked {
+  display: flex;
+  background-color:#661e1e ;
+  color: #fff;
+}
+
+.clickable-cell a{
+  color:#ab4141;
+}
+
+.scrollable-list::-webkit-scrollbar {
+  width: 12px;
+  background-color: #f5f5f500;
+}
+
+.scrollable-list::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 5px 0 6px rgba(0, 0, 0, 0.1);
+  background-color:#ab4141;
+}

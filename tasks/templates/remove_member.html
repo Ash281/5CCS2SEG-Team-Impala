@@ -7,20 +7,14 @@
   <form method="post" action="{% url 'remove_members' team.id %}">
     {% csrf_token %}
     {% for member in team.members.all %}
-      <label>
-        <input type="checkbox" name="members_to_remove" value="{{ member.id }}">
-        {{ member.username }}
-      </label><br>
+      {% if member != request.user %}
+        <label>
+          <input type="checkbox" name="members_to_remove" value="{{ member.id }}">
+          {{ member.username }}
+        </label><br>
+      {% endif %}
     {% endfor %}
     <button type="submit"  class="btn btn-lg btn-secondary">Remove Selected Members</button>
   </form>
 </div>  
-
-
-
-
-
-
-
-
 {% endblock %}

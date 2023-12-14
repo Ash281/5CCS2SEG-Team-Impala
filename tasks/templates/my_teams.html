@@ -1,7 +1,7 @@
 {% extends 'base_content.html' %}
 {% block main_content %}
 
-  {% for team in teams %}
+  {% for team in user_teams %}
 
     <div class="vcenter-item" style="overflow-wrap: break-word;">
       <div class="text-center" style="width: 10%;">
@@ -10,6 +10,7 @@
         </a>
         <p> {{team.team_description}} </p>
       </div>
+
       <div class="card long-card vcenter-item d-flex flex-row">
 
         <div class="task" style="margin-left:5px;">

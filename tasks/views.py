@@ -33,9 +33,18 @@ def dashboard(request):
     first_three = Task.objects.order_by('due_date')[:3]
     next_three = Task.objects.order_by('due_date')[3:6]
     user_teams = current_user.teams.all()
+    tasks = Task.objects.filter(assignees=current_user.id)
+    todo_tasks_count = 0
+    in_progress = 0
+    complete_tasks = 0
+    for i in tasks.filter(status="TODO"):
+        todo_tasks_count += 1
+    for i in tasks.filter(status="IN_PROGRESS"):
+        in_progress += 1
+    for i in tasks.filter(status="DONE"):
+        complete_tasks += 1
 
-
-    return render(request, 'dashboard.html', {'user': current_user, 'first_three': first_three, 'next_three': next_three, 'user_teams': user_teams})
+    return render(request, 'dashboard.html', {'user': current_user, 'first_three': first_three, 'next_three': next_three, 'user_teams': user_teams,'to_do_tasks':todo_tasks_count,'in_progress' : in_progress, 'done' : complete_tasks})
 
 
 @login_prohibited
@@ -97,9 +106,25 @@ def task_list(request):
     return render(request, 'task_list.html', {'tasks': tasks, 'sort_by': sort_by, 'filter_by': filter_by})
 
 def my_teams(request):
-    teams = Team.objects.all()
+    current_user = request.user
+    user_teams = current_user.teams.all()
 
-    return render(request, 'my_teams.html', {'teams': teams})
+    return render(request, 'my_teams.html', {'user_teams': user_teams})
+
+def my_tasks(request):
+    current_user = request.user
+    user_teams = current_user.teams.all()
+    tasks = Task.objects.filter(assignees=current_user.id)
+
+    return render(request, 'my_tasks.html', {'user_teams': user_teams, 'user_tasks': tasks})
+
+def num_of_tasks(request):
+    current_user = request.user
+    user_teams = current_user.teams.all()
+    tasks = Task.objects.filter(assignees=current_user.id)
+    todo_tasks_count = tasks.filter(status="TODO").count()
+    
+    return render(request, 'dashboard.html', {'user_teams': user_teams, 'user_tasks': tasks})
 
 def task_detail(request, task_title):
     task = get_object_or_404(Task, pk=task_title)
@@ -108,14 +133,16 @@ def task_detail(request, task_title):
 
 def edit_task(request, task_title):
     task = get_object_or_404(Task, task_title=task_title)
+    team = get_object_or_404(Team, id=task.team.id)
+    print(team.members.all())
     if request.method == 'POST':
-        form = CreateTaskForm(request.POST, instance=task)
+        form = CreateTaskForm(request.POST, team_id=team.id, instance=task)
         if form.is_valid():
             form.save()
-            return redirect('task_list')  
+            return redirect('team_dashboard', id=task.team.id) 
     else:
-        form = CreateTaskForm(instance=task)
-    return render(request, 'edit_task.html', {'form': form, 'task': task})
+        form = CreateTaskForm(team_id=team.id, instance=task)
+    return render(request, 'edit_task.html', {'form': form, 'task': task, 'members':team.members.all()})
 
 
 @require_POST
@@ -128,6 +155,12 @@ def mark_task_complete(request, task_title):
     task.hours_spent = total_hours_spent
     task.save()
     return render(request, 'task_detail.html', {'task': task})
+
+def delete_task(request, task_title):
+    task = get_object_or_404(Task, task_title=task_title)
+    id = task.team.id
+    task.delete()
+    return redirect('team_dashboard', id=id)
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
@@ -349,7 +382,16 @@ class TeamDashboardView(LoginRequiredMixin, View):
         # Retrieve the team by id, or show a 404 error if not found
         team = get_object_or_404(Team, id=id)
         tasks = Task.objects.filter(team=team)
-
+        priority_choices = {
+            'high_priority': 'HI',
+            'med_priority': 'MD',
+            'low_priority': 'LW',
+        }
+        priority_filter = request.GET.get('filter_by')
+        if priority_filter:
+            priority = priority_choices[priority_filter]
+        else:
+            priority = None
         # You can add more context data as needed
         context = {
             'team_name': team.team_name,
@@ -357,14 +399,16 @@ class TeamDashboardView(LoginRequiredMixin, View):
             'members': team.members.all(),
             'created_at': team.created_at,
             'id': id,
-            'tasks' : tasks
+            'tasks' : tasks,
+            'priority' : priority
             # Add more context data here
         }
 
         # return reverse('team_dashboard')
-        
-        print(f"All teams: {id}")
-        return render(request, 'team_dashboard.html', context)
+        if request.user in team.members.all():
+            return render(request, 'team_dashboard.html', context)
+        else:
+            return redirect('dashboard')
     
 # class CreateTaskView(LoginRequiredMixin, View):
 #     """Display the dashboard for a specific team."""
@@ -412,7 +456,7 @@ class CreateTaskView(LoginRequiredMixin, View):
             'id': id
         }
 
-        return render(request, 'create_task.html', context)
+        return render(request, 'edit_task.html', context)
 
     def post(self, request, id):
         # Retrieve the team by id, or show a 404 error if not found
@@ -424,19 +468,19 @@ class CreateTaskView(LoginRequiredMixin, View):
         if form.is_valid():
             # Save the form and do any other necessary logic
             form.save()
-
+            return redirect('team_dashboard', id=id)
         # If the form is not valid, render the page with the form errors
-        context = {
-            'form': form,
-            'team_name': team.team_name,
-            'team_description': team.team_description,
-            'members': team.members.all(),
-            'created_at': team.created_at,
-            'id': id
-        }
-
-        return render(request, 'create_task.html', context)
-
+        else:
+            context = {
+                'form': form,  # Include the form in the context
+                'team_name': team.team_name,
+                'team_description': team.team_description,
+                'members': team.members.all(),
+                'created_at': team.created_at,
+                'id': id
+            }
+            return render(request, 'edit_task.html', context)
+    
 class RemoveMembersView(LoginRequiredMixin, View):
     """View to display a page for removing members from a team."""
 
@@ -488,6 +532,22 @@ class AddMembersView(LoginRequiredMixin, View):
             messages.add_message(request, messages.ERROR, "This user is either already in the team or does not exist!")
 
         return render(self.request, 'add_members.html', {'form': form, 'team_id': team_id})
+    
+class LeaveTeamView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        team = get_object_or_404(Team, id=id)
+        team.members.remove(request.user)
+        messages.add_message(request, messages.SUCCESS, "You've successfully left the team!")
+        if team.members.count() == 0:
+            team.delete()
+        return redirect('dashboard')
+    
+class DeleteTeamView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        team = get_object_or_404(Team, id=id)
+        team.delete()
+        messages.add_message(request, messages.SUCCESS, "You've successfully deleted the team!")
+        return redirect('dashboard')
     
 class JoinTeamView(View):
     def get(self, *args, **kwargs):

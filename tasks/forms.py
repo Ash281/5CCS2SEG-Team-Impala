@@ -225,9 +225,10 @@ class CreateTeamForm(forms.ModelForm):
 class CreateTaskForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
-        self.team_id = kwargs.pop('team_id', None)
+        self.team_id = kwargs.pop('team_id')
         super(CreateTaskForm, self).__init__(*args, **kwargs)
 
+        print(f"My team my {self.team_id}")
         if self.team_id:
             self.fields['assignees'].queryset = User.objects.filter(teams__id=self.team_id)
         else:
@@ -235,22 +236,38 @@ class CreateTaskForm(forms.ModelForm):
 
     def save(self, commit=True):
         task = super(CreateTaskForm, self).save(commit=False)
-        task.team_id = self.team_id
+        task.team_id = self.team_id 
         if commit:
             task.save()
+
+           
+            existing_assignees = task.assignees.all()
+            print(f"My assignees {existing_assignees}")
+            #selected_users = [user for user in self.cleaned_data['assignees'] if user not in existing_assignees]
+            task.assignees.set(self.cleaned_data['assignees'])  # Set the assignees to the selected users
+            
+
+            if self.cleaned_data['status'] == "DONE":
+                task.hours_spent = task.duration()
+                for user in task.assignees.all():
+                    print("My jelly points")
+                    user.jelly_points += task.jelly_points
+                    user.save()
+
+            task.save()
+
         return task
 
     class Meta:
         model = Task
-        fields = ['task_title', 'task_description', 'due_date', 'assignees', 'priority']
+        fields = ['task_title', 'task_description', 'due_date', 'jelly_points', 'assignees', 'priority', 'status']
         labels = {
             'task_title': 'Task title',
             'task_description': 'Task description',
-            'due_date': 'Due date',
-            'assignees': 'Assign to', 
-            'priority': 'Priority'
-        
+            'due_date': 'Due date', 
+            'priority': 'Priority',
+            'status': 'Status',
+            'jelly_points': 'Jelly points'
         }
-        widgets = { 'task_description': forms.Textarea(), 'due_date': forms.DateInput(attrs={'type': 'date'}), 'assignees': forms.CheckboxSelectMultiple() }
-
+        widgets = { 'task_description': forms.Textarea(), 'due_date': forms.DateInput(attrs={'type': 'date'})}
     

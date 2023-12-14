@@ -15,22 +15,11 @@
                     <p><strong>Hours spent:</strong> {{ task.hours_spent }}</p>
                     <p><strong>Status:</strong> {{ task.get_status_display }}</p>
                     </div>
-                    <!-- <form action="{% url 'mark_task_complete' task.task_title %}" method="post" >
-                        {% csrf_token %}
-                        <p><input type="submit" value="Mark as Complete" class="btn btn-lg btn-secondary" ></p>
-                      </form> -->
                 </div>
             </div>
 
             <div class="col-md-6">
                 <div class="mt-2">
-                <form action="{% url 'mark_task_complete' task.task_title %}" method="post" onsubmit="return getTaskDetails()">
-                    {% csrf_token %}
-                    <input type="hidden" name="days" id="days">
-                    <input type="hidden" name="hours" id="hours">
-                    <p><input type="submit" value="Mark as Complete" class="btn subheading-small"></p>
-                </form>
-            
                 <p>
                     <a href="{% url 'edit_task' task.task_title %}" class="btn subheading-small">Edit this Task</a>
                 </p>
@@ -38,29 +27,14 @@
                 <p>
                     <a href="{% url 'team_dashboard' id=task.team.id %}" class="btn subheading-small">Back to Dashboard</a>
                 </p>
+
+                <p>
+                    <a href="{% url 'delete_task' task.task_title %}" class="btn subheading-small">Delete this Task</a>
+                </p>
+                
                 </div>
             </div>
         </div>
     </div>
-   
-    
-
-    <script>
-        function getTaskDetails() {
-            var days = prompt("Please state how many days you spent working on this task:");
-            var hours = prompt("Please state how many hours you spent on this task per day:\n0 --- 24 hours", "0");
-
-            if (days.trim() !== "" && hours.trim() !== "") {
-                document.getElementById('days').value = days;
-                document.getElementById('hours').value = hours;
-                return true;
-
-            } else {
-                alert("You must enter both the number of days and hours.");
-                return false;
-            }
-        }
-    </script>
-    
   
 {% endblock %}
