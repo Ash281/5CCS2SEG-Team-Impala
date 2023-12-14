@@ -255,12 +255,7 @@ class CreateTaskForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.team_id = kwargs.pop('team_id')
         super(CreateTaskForm, self).__init__(*args, **kwargs)
-
-        print(f"My team my {self.team_id}")
-        if self.team_id:
-            self.fields['assignees'].queryset = User.objects.filter(teams__id=self.team_id)
-        else:
-            self.fields['assignees'].queryset = User.objects.none()
+        self.fields['assignees'].queryset = User.objects.filter(teams__id=self.team_id)
 
     def save(self, commit=True):
         task = super(CreateTaskForm, self).save(commit=False)
@@ -268,14 +263,12 @@ class CreateTaskForm(forms.ModelForm):
         if commit:
             task.save()
             existing_assignees = task.assignees.all()
-            print(f"My assignees {existing_assignees}")
             #selected_users = [user for user in self.cleaned_data['assignees'] if user not in existing_assignees]
             task.assignees.set(self.cleaned_data['assignees'])  # Set the assignees to the selected users
             
             if self.cleaned_data['status'] == "DONE":
                 task.hours_spent = task.duration()
                 for user in task.assignees.all():
-                    print("My jelly points")
                     user.jelly_points += task.jelly_points
                     user.save()
             task.save()

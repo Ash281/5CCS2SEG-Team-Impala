@@ -54,147 +54,100 @@ def home(request):
 
     return render(request, 'home.html')
 
-# def create_task(request, id):
-#     team = get_object_or_404(Team, pk=id)
-#     if request.method == 'POST':
-#         form = CreateTaskForm(request.POST, id=team.id)
-#         if form.is_valid():
-#             form.save()
+
+class MyTeamsView(LoginRequiredMixin, View):
+    def get(self, request):
+        current_user = request.user
+        user_teams = current_user.teams.all()
+
+        return render(request, 'my_teams.html', {'user_teams': user_teams})
+
+class MyTasksView(LoginRequiredMixin, View):
+    def get(self, request):
+        current_user = request.user
+        user_teams = current_user.teams.all()
+        tasks = Task.objects.filter(assignees=current_user.id)
+        priority_form = FilterPriorityForm(request.GET)
+        date_form = FilterDateRangeForm(request.GET)
+        search_form = SearchTaskForm(request.GET)
+        priority_choices = {
+                'high_priority': 'HI',
+                'med_priority': 'MD',
+                'low_priority': 'LW',
+            }
+        priority_filter = request.GET.get('filter_by_priority')
+        if priority_filter:
+            priority = priority_choices[priority_filter]
+        else:
+            priority = None
+        start_date_filter = request.GET.get('start_date')
+        end_date_filter = request.GET.get('end_date')
+        if start_date_filter:
+            start_date = parse_date(start_date_filter)
+        else:
+            start_date = None
+        if end_date_filter:
+            end_date = parse_date(end_date_filter)
+        else:
+            end_date = None
+
+        search_term = request.GET.get('search')
+        if search_term:
+            search = search_term
+        else:
+            search = None
+        context = (
+            {'user_teams': user_teams,
+            'user_tasks': tasks,
+            'priority_form': priority_form,
+            'date_form': date_form, 
+            'search_form': search_form,
+            'priority': priority,
+            'start_date': start_date,
+            'end_date': end_date,
+            'search': search}
+            )
+
+        return render(request, 'my_tasks.html', context)
+    #        return render(request, 'my_tasks.html', {'user_teams': user_teams, 'user_tasks': tasks})
+
+
+
+class TaskDetailsView(LoginRequiredMixin, View):
+    def get(self, request, task_title):
+        task = get_object_or_404(Task, pk=task_title)
         
-#     else:
-#         form = CreateTaskForm(id=team.id)
-
-#     return render(request, 'create_task.html', {'form': form})
-
-def task_list(request):
-    sort_by = request.GET.get('sort_by', 'due_date')  
-
-    if sort_by == 'priority':
-        tasks = Task.objects.order_by('priority')  
-    elif sort_by == 'status':
-        tasks = Task.objects.order_by('-status')  # incomplete tasks first
-    elif sort_by == 'task_title':
-        tasks = Task.objects.order_by('task_title')  
-    else:  
-        tasks = Task.objects.order_by('due_date')
- 
-    filter_by = request.GET.get('filter_by', '')  
-
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-
-    if filter_by == 'date_range' and start_date and end_date:
-        start_date = parse_date(start_date)
-        end_date = parse_date(end_date)
-        tasks = Task.objects.filter(due_date__range=[start_date, end_date])
-    elif filter_by == 'high_priority':
-        tasks = Task.objects.filter(priority='HI')  
-    elif filter_by == 'med_priority':
-        tasks = Task.objects.filter(priority='MD') 
-    elif filter_by == 'low_priority':
-        tasks = Task.objects.filter(priority='LW') 
-    elif filter_by == 'incomp_status':
-        tasks = Task.objects.filter(status='NOT_STARTED') 
-    elif filter_by == 'comp_status':
-        tasks = Task.objects.filter(status='COMPLETED') 
-
-    search = request.GET.get('search', '')  
-
-    if search:
-        tasks = Task.objects.filter(task_title__icontains=search)
+        return render(request, 'task_detail.html', {'task': task})
     
 
-    return render(request, 'task_list.html', {'tasks': tasks, 'sort_by': sort_by, 'filter_by': filter_by})
 
-def my_teams(request):
-    current_user = request.user
-    user_teams = current_user.teams.all()
+class EditTaskView(LoginRequiredMixin, View):
+    template_name = "edit_task.html"
 
-    return render(request, 'my_teams.html', {'user_teams': user_teams})
+    def get(self, request, task_title):
+        task, team = self.get_task_and_team(task_title)
+        form = CreateTaskForm(team_id=team.id, instance=task)
+        return render(request, self.template_name, {'form': form, 'task': task, 'members':team.members.all()})
 
-def my_tasks(request):
-    current_user = request.user
-    user_teams = current_user.teams.all()
-    tasks = Task.objects.filter(assignees=current_user.id)
-    priority_form = FilterPriorityForm(request.GET)
-    date_form = FilterDateRangeForm(request.GET)
-    search_form = SearchTaskForm(request.GET)
-    priority_choices = {
-            'high_priority': 'HI',
-            'med_priority': 'MD',
-            'low_priority': 'LW',
-        }
-    priority_filter = request.GET.get('filter_by_priority')
-    if priority_filter:
-        priority = priority_choices[priority_filter]
-    else:
-        priority = None
-    start_date_filter = request.GET.get('start_date')
-    end_date_filter = request.GET.get('end_date')
-    if start_date_filter:
-        start_date = parse_date(start_date_filter)
-    else:
-        start_date = None
-    if end_date_filter:
-        end_date = parse_date(end_date_filter)
-    else:
-        end_date = None
-
-    search_term = request.GET.get('search')
-    if search_term:
-        search = search_term
-    else:
-        search = None
-    context = (
-        {'user_teams': user_teams,
-        'user_tasks': tasks,
-        'priority_form': priority_form,
-        'date_form': date_form, 
-        'search_form': search_form,
-        'priority': priority,
-        'start_date': start_date,
-        'end_date': end_date,
-        'search': search}
-        )
-
-    return render(request, 'my_tasks.html', context)
-
-
-def task_detail(request, task_title):
-    task = get_object_or_404(Task, pk=task_title)
-    return render(request, 'task_detail.html', {'task': task})
-
-
-def edit_task(request, task_title):
-    task = get_object_or_404(Task, task_title=task_title)
-    team = get_object_or_404(Team, id=task.team.id)
-    print(team.members.all())
-    if request.method == 'POST':
+    def post(self, request, task_title):
+        task, team = self.get_task_and_team(task_title)
         form = CreateTaskForm(request.POST, team_id=team.id, instance=task)
         if form.is_valid():
             form.save()
-            return redirect('team_dashboard', id=task.team.id) 
-    else:
-        form = CreateTaskForm(team_id=team.id, instance=task)
-    return render(request, 'edit_task.html', {'form': form, 'task': task, 'members':team.members.all()})
-
-
-@require_POST
-def mark_task_complete(request, task_title):
-    task = get_object_or_404(Task, task_title=task_title)
-    days = int(request.POST.get('days', 0))
-    hours_per_day = int(request.POST.get('hours', 0))
-    total_hours_spent = days * hours_per_day
-    task.status = 'COMPLETED'
-    task.hours_spent = total_hours_spent
-    task.save()
-    return render(request, 'task_detail.html', {'task': task})
-
-def delete_task(request, task_title):
-    task = get_object_or_404(Task, task_title=task_title)
-    id = task.team.id
-    task.delete()
-    return redirect('team_dashboard', id=id)
+            return redirect('team_dashboard', id=task.team.id)
+        return render(request, self.template_name, {'form': form, 'task': task, 'members':team.members.all()})
+    
+    def get_task_and_team(self, task_title):
+        task = get_object_or_404(Task, task_title=task_title)
+        team = get_object_or_404(Team, id=task.team.id)
+        return task, team
+    
+class DeleteTaskView(LoginRequiredMixin, View):
+    def get(self, request, task_title):
+        task = get_object_or_404(Task, task_title=task_title)
+        id = task.team.id
+        task.delete()
+        return redirect('team_dashboard', id=id)
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
@@ -500,15 +453,10 @@ class CreateTaskView(LoginRequiredMixin, View):
     """Display the dashboard for a specific team."""
 
     def get(self, request, id):
-        # Retrieve the team by id, or show a 404 error if not found
         team = get_object_or_404(Team, id=id)
-
-        # Initialize the form with team_id
-        form = CreateTaskForm(team_id=id)  # Change here
-
-        # Prepare the context data
+        form = CreateTaskForm(team_id=id)
         context = {
-            'form': form,  # Include the form in the context
+            'form': form,
             'team_name': team.team_name,
             'team_description': team.team_description,
             'members': team.members.all(),
@@ -521,7 +469,6 @@ class CreateTaskView(LoginRequiredMixin, View):
     def post(self, request, id):
         # Retrieve the team by id, or show a 404 error if not found
         team = get_object_or_404(Team, id=id)
-
         # Initialize the form with POST data and team_id
         form = CreateTaskForm(request.POST, team_id=id)  # Change here
 
