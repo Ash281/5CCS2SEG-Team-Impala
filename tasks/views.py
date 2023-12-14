@@ -420,8 +420,6 @@ class TeamDashboardView(LoginRequiredMixin, View):
         else:
             return redirect('dashboard')
     
-        return render(request, 'create_task.html', context)
-    
 class CreateTaskView(LoginRequiredMixin, View):
     """Display the dashboard for a specific team."""
 
