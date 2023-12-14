@@ -348,16 +348,11 @@ class CreateTeamView(LoginRequiredMixin, FormView):
 
     
     def form_valid(self, form):
-        # messages.add_message(self.request, messages.SUCCESS, "Team created successfully!")
-        # print(self.object)
-        # return super().form_valid(form)
-
         team = form.save()
         team.save()
 
         team.members.add(self.request.user)
         messages.add_message(self.request, messages.SUCCESS, "Team created successfully!")
-        # print("Newly created team ID:", team.id)
         return redirect('team_dashboard', id=team.id)
 
 class TeamDashboardView(LoginRequiredMixin, View):
@@ -423,31 +418,7 @@ class TeamDashboardView(LoginRequiredMixin, View):
         else:
             return redirect('dashboard')
     
-# class CreateTaskView(LoginRequiredMixin, View):
-#     """Display the dashboard for a specific team."""
-
-#     def get(self, request, id):
-#         # Retrieve the team by id, or show a 404 error if not found
-#         team = get_object_or_404(Team, id=id)
-
-#         # You can add more context data as needed
-#         context = {
-#             'team_name': team.team_name,
-#             'team_description': team.team_description,
-#             'members': team.members.all(),
-#             'created_at': team.created_at,
-#             'id': id
-#             # Add more context data here
-#         }
-#         if request.method == 'POST':
-#             form = CreateTaskForm(request.POST, id=id)
-#             if form.is_valid():
-#                 form.save()
-            
-#         else:
-#             form = CreateTaskForm(id=id)
-
-#         return render(request, 'create_task.html', context)
+        return render(request, 'create_task.html', context)
     
 class CreateTaskView(LoginRequiredMixin, View):
     """Display the dashboard for a specific team."""
@@ -467,19 +438,15 @@ class CreateTaskView(LoginRequiredMixin, View):
         return render(request, 'edit_task.html', context)
 
     def post(self, request, id):
-        # Retrieve the team by id, or show a 404 error if not found
         team = get_object_or_404(Team, id=id)
-        # Initialize the form with POST data and team_id
-        form = CreateTaskForm(request.POST, team_id=id)  # Change here
+        form = CreateTaskForm(request.POST, team_id=id)
 
         if form.is_valid():
-            # Save the form and do any other necessary logic
             form.save()
             return redirect('team_dashboard', id=id)
-        # If the form is not valid, render the page with the form errors
         else:
             context = {
-                'form': form,  # Include the form in the context
+                'form': form, 
                 'team_name': team.team_name,
                 'team_description': team.team_description,
                 'members': team.members.all(),
@@ -491,26 +458,16 @@ class CreateTaskView(LoginRequiredMixin, View):
 class RemoveMembersView(LoginRequiredMixin, View):
     """View to display a page for removing members from a team."""
 
-    template_name = 'remove_member.html'  # Create a new template for this view
+    template_name = 'remove_member.html'
 
     def get(self, request, id):
         team = get_object_or_404(Team, id=id)
-
-        # Ensure that the logged-in user is the owner of the team
-        # if request.user != team.owner:
-        #     messages.add_message(request, messages.WARNING, "You do not have permission to remove members.")
-        #     return redirect('team_dashboard', id=team.id)
 
         context = {'team': team}
         return render(request, self.template_name, context)
 
     def post(self, request, id):
         team = get_object_or_404(Team, id=id)
-
-        # Ensure that the logged-in user is the owner of the team
-        # if request.user != team.owner:
-        #     messages.add_message(request, messages.WARNING, "You do not have permission to remove members.")
-        #     return redirect('team_dashboard', id=team.id)
 
         members_to_remove_ids = request.POST.getlist('members_to_remove')
 
