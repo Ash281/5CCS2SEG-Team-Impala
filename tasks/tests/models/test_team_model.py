@@ -4,7 +4,9 @@ from django.test import TestCase
 from tasks.forms import CreateTeamForm
 from tasks.models import Team
 from django.core.exceptions import ValidationError
-
+from unittest.mock import patch
+from django.utils import timezone
+import datetime
 
 class TeamModelTestCase(TestCase):
     """Unit tests for the Team model."""
@@ -15,6 +17,21 @@ class TeamModelTestCase(TestCase):
             'team_description': 'SEG Group Coursework Project',
             'created_at' : '2020-03-01 00:00:00',
         }
+    
+    def test_str_method(self):
+        team = Team(team_name="Test Team", team_description="Test Description")
+        self.assertEqual(str(team), "Test Team")
+
+    def test_description_method(self):
+        team = Team(team_name="Test Team", team_description="Test Description")
+        self.assertEqual(team.description(), "Test Description")
+
+    def test_duration_method(self):
+        team = Team(team_name="Test Team", team_description="Test Description")
+        team.created_at = timezone.now() - datetime.timedelta(days=2, hours=3, minutes=30)
+
+        with patch('django.utils.timezone.now', return_value=team.created_at + datetime.timedelta(days=2, hours=3, minutes=30)):
+            self.assertEqual(team.duration(), "2 days, 3 hours")
     
     ### Test team name ###
 
@@ -82,25 +99,6 @@ class TeamModelTestCase(TestCase):
         team = Team.objects.create(team_name="Example Team", team_description="Example Description")
         self.assertIsNotNone(team.created_at)
     
-    ### Test team members field ###
-    # def test_team_members_must_not_be_empty(self):
-    #     empty_member_data = {
-    #         'team_name': 'Test Team', 
-    #         'team_description': 'Test Description', 
-    #         'members': []
-    #     }
-    #     form = CreateTeamForm(data=empty_member_data)
-    #     self.assertFalse(form.is_valid())
-    
-    # def test_team_members_must_be_valid(self):
-    #     invalid_member_data = {
-    #         'team_name': 'Test Team', 
-    #         'team_description': 'Test Description', 
-    #         'members': [9999]  
-    #     }
-    #     form = CreateTeamForm(data=invalid_member_data)
-    #     self.assertFalse(form.is_valid())
-    
     def _assert_team_is_valid(self):
         try:
             self.team.full_clean()
@@ -110,15 +108,3 @@ class TeamModelTestCase(TestCase):
     def _assert_team_is_invalid(self):
         with self.assertRaises(ValidationError):
             self.team.full_clean()
-
-    # def test_remove_member(self):
-    #     # Test removing an existing member
-    #     member_to_remove = Team.objects.get(name="Test User 1")
-    #     member_count_before = Team.objects.count()
-
-    #     # Call your remove member function
-    #     member_to_remove.remove_member()
-
-    #     # Check if the member was removed
-    #     self.assertEqual(Team.objects.count(), member_count_before - 1)
-    #     self.assertFalse(Team.objects.filter(name="Test User 1").exists())
