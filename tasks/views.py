@@ -59,8 +59,10 @@ class MyTeamsView(LoginRequiredMixin, View):
     def get(self, request):
         current_user = request.user
         user_teams = current_user.teams.all()
+        tasks = Task.objects.filter(assignees=current_user.id)
+        
 
-        return render(request, 'my_teams.html', {'user_teams': user_teams})
+        return render(request, 'my_teams.html', {'user_teams': user_teams,'user_tasks' : tasks})
 
 class MyTasksView(LoginRequiredMixin, View):
     def get(self, request):

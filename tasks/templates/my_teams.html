@@ -14,16 +14,20 @@
       <div class="card long-card vcenter-item d-flex flex-row">
 
         <div class="task" style="margin-left:5px;">
-          <p> Project due date: </p>
+          <p> Project Created Date: </p>
           <p> {{team.created_at}} </p>
         </div>
         <div class="task" style="margin-left:5px;">
-          <p> Number of Tasks Todo </p>
-          <p> X </p>
+          <p> Number of Members </p>
+          <p> {{team.members.all.count}} </p>
         </div>
         <div class="task" style="margin-left:5px;">
           <p> Team Member</p>
-          <p> {{team.members}} </p>
+          {% for user in team.members.all %}
+            {% if forloop.counter <= 3 %}
+              <img src="{{ user.mini_gravatar }}" alt="Gravatar of {{ user.username }}" class="rounded-circle" >
+            {% endif %}
+          {% endfor %}
         </div>
 
       </div>
