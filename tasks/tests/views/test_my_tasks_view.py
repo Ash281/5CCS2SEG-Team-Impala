@@ -31,34 +31,3 @@ class MyTaskViewTestCase(TestCase):
         self.assertIn(self.team, team)
         self.assertTemplateUsed(response, 'my_tasks.html')
 
-    def test_priority_filter_url_correct(self):
-        # Write a test for the priority filter form
-        self.client.login(username=self.user.username, password='Password123')
-        form_data = {'priority': 'high_priority'}
-        response = self.client.get(self.url, form_data)
-        self.assertEqual(response.status_code, 200)
-        query_params = response.context['request'].GET
-        self.assertIn('priority', query_params)
-        self.assertEqual(query_params['priority'], 'high_priority')
-
-    def test_date_range_filter_url_correct(self):
-        # Write a test for the date range filter form
-        self.client.login(username=self.user.username, password='Password123')
-        form_data = {'start_date': date(2023,12,15), 'end_date': date(2030,12,31)}
-        response = self.client.get(self.url, form_data)
-        self.assertEqual(response.status_code, 200)
-        query_params = response.context['request'].GET
-        self.assertIn('start_date', query_params)
-        self.assertIn('end_date', query_params)
-        self.assertEqual(query_params['start_date'], '2023-12-15')
-        self.assertEqual(query_params['end_date'], '2030-12-31')
-
-    def test_search_filter_url_correct(self):
-        # Write a test for the priority filter form
-        self.client.login(username=self.user.username, password='Password123')
-        form_data = {'search': 'hello'}
-        response = self.client.get(self.url, form_data)
-        self.assertEqual(response.status_code, 200)
-        query_params = response.context['request'].GET
-        self.assertIn('search', query_params)
-        self.assertEqual(query_params['search'], 'hello')

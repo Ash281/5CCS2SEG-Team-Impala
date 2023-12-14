@@ -46,6 +46,49 @@ def dashboard(request):
 
     return render(request, 'dashboard.html', {'user': current_user, 'user_teams': user_teams,'to_do_tasks':todo_tasks_count,'in_progress' : in_progress, 'done' : complete_tasks})
 
+def filter_function(request):
+    
+    priority_form = FilterPriorityForm(request.GET)
+    date_form = FilterDateRangeForm(request.GET)
+    search_form = SearchTaskForm(request.GET)
+    priority_choices = {
+        'high_priority': 'HI',
+        'med_priority': 'MD',
+        'low_priority': 'LW',
+    }
+    priority_filter = request.GET.get('filter_by_priority')
+    if priority_filter:
+        priority = priority_choices[priority_filter]
+    else:
+        priority = None
+    start_date_filter = request.GET.get('start_date')
+    end_date_filter = request.GET.get('end_date')
+    if start_date_filter:
+        start_date = parse_date(start_date_filter)
+    else:
+        start_date = None
+    if end_date_filter:
+        end_date = parse_date(end_date_filter)
+    else:
+        end_date = None
+
+    search_term = request.GET.get('search')
+    if search_term:
+        search = search_term
+    else:
+        search = None
+    # You can add more context data as needed
+    context = {
+        'priority_form' : priority_form,
+        'date_form' : date_form,
+        'search_form' : search_form,
+        'priority' : priority,
+        'start_date' : start_date,
+        'end_date' : end_date,
+        'search' : search
+        # Add more context data here
+    }
+    return context
 
 @login_prohibited
 def home(request):
@@ -66,48 +109,17 @@ class MyTeamsView(LoginRequiredMixin, View):
 class MyTasksView(LoginRequiredMixin, View):
     def get(self, request):
         current_user = request.user
-        user_teams = current_user.teams.all()
         tasks = Task.objects.filter(assignees=current_user.id)
-        priority_form = FilterPriorityForm(request.GET)
-        date_form = FilterDateRangeForm(request.GET)
-        search_form = SearchTaskForm(request.GET)
-        priority_choices = {
-                'high_priority': 'HI',
-                'med_priority': 'MD',
-                'low_priority': 'LW',
-            }
-        priority_filter = request.GET.get('filter_by_priority')
-        if priority_filter:
-            priority = priority_choices[priority_filter]
-        else:
-            priority = None
-        start_date_filter = request.GET.get('start_date')
-        end_date_filter = request.GET.get('end_date')
-        if start_date_filter:
-            start_date = parse_date(start_date_filter)
-        else:
-            start_date = None
-        if end_date_filter:
-            end_date = parse_date(end_date_filter)
-        else:
-            end_date = None
-
-        search_term = request.GET.get('search')
-        if search_term:
-            search = search_term
-        else:
-            search = None
+        user_teams = current_user.teams.all()
         context = (
             {'user_teams': user_teams,
-            'user_tasks': tasks,
-            'priority_form': priority_form,
-            'date_form': date_form, 
-            'search_form': search_form,
-            'priority': priority,
-            'start_date': start_date,
-            'end_date': end_date,
-            'search': search}
+             'user_tasks': tasks}
             )
+        add_file = filter_function(request)
+        context.update(add_file)
+
+        # Add more context data here
+    
 
         return render(request, 'my_tasks.html', context)
     #        return render(request, 'my_tasks.html', {'user_teams': user_teams, 'user_tasks': tasks})
@@ -363,54 +375,20 @@ class TeamDashboardView(LoginRequiredMixin, View):
         # Retrieve the team by id, or show a 404 error if not found
         team = get_object_or_404(Team, id=id)
         tasks = Task.objects.filter(team=team)
-        priority_form = FilterPriorityForm(request.GET)
-        date_form = FilterDateRangeForm(request.GET)
-        search_form = SearchTaskForm(request.GET)
-        priority_choices = {
-            'high_priority': 'HI',
-            'med_priority': 'MD',
-            'low_priority': 'LW',
-        }
-        priority_filter = request.GET.get('filter_by_priority')
-        if priority_filter:
-            priority = priority_choices[priority_filter]
-        else:
-            priority = None
-        start_date_filter = request.GET.get('start_date')
-        end_date_filter = request.GET.get('end_date')
-        if start_date_filter:
-            start_date = parse_date(start_date_filter)
-        else:
-            start_date = None
-        if end_date_filter:
-            end_date = parse_date(end_date_filter)
-        else:
-            end_date = None
-
-        search_term = request.GET.get('search')
-        if search_term:
-            search = search_term
-        else:
-            search = None
         # You can add more context data as needed
-        context = {
+        context = (
+            {
             'team_name': team.team_name,
             'team_description': team.team_description,
             'members': team.members.all(),
             'created_at': team.created_at,
             'id': id,
-            'tasks' : tasks,
-            'priority' : priority,
-            'priority_form' : priority_form,
-            'date_form' : date_form,
-            'search_form' : search_form,
-            'start_date' : start_date,
-            'end_date' : end_date,
-            'search' : search
+            'tasks' : tasks
             # Add more context data here
-        }
+            }
+        )
 
-        # return reverse('team_dashboard')
+        addFiled = filter_function(request)
         if request.user in team.members.all():
             return render(request, 'team_dashboard.html', context)
         else:
@@ -428,13 +406,14 @@ class CreateTaskView(LoginRequiredMixin, View):
             'team_description': team.team_description,
             'members': team.members.all(),
             'created_at': team.created_at,
-            'id': team.id
+            'id': team.id,
         }
 
         return render(request, 'edit_task.html', context)
 
     def post(self, request, id):
         team = get_object_or_404(Team, id=id)
+        tasks = Task.objects.filter(team=team)
         form = CreateTaskForm(request.POST, team_id=id)
 
         if form.is_valid():
@@ -447,7 +426,8 @@ class CreateTaskView(LoginRequiredMixin, View):
                 'team_description': team.team_description,
                 'members': team.members.all(),
                 'created_at': team.created_at,
-                'id': team.id
+                'id': team.id,
+                'tasks' : tasks,
             }
             return render(request, 'edit_task.html', context)
     
