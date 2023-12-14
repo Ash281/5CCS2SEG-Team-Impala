@@ -58,7 +58,6 @@ class CreateTaskFormFormTestCase(TestCase):
         self.assertEqual(task.due_date, datetime.date(2024, 10, 10))
 
     def test_task_hours_spent_is_set_when_completed(self):
-    
         form = CreateTaskForm(data=self.form_input, team_id=self.team.id)
         form.save()
         task = Task.objects.get(task_title='Test Task')
@@ -87,3 +86,9 @@ class CreateTaskFormFormTestCase(TestCase):
         after_count3 = task.hours_spent
         self.assertEquals(after_count1,after_count2)
         self.assertNotEqual(after_count1,after_count3)
+
+    def test_create_task_with_invalid_team_id(self):
+        form = CreateTaskForm(data=self.form_input)
+        form.save()
+
+        

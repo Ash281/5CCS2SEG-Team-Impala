@@ -53,75 +53,26 @@ def home(request):
 
     return render(request, 'home.html')
 
-# def create_task(request, id):
-#     team = get_object_or_404(Team, pk=id)
-#     if request.method == 'POST':
-#         form = CreateTaskForm(request.POST, id=team.id)
-#         if form.is_valid():
-#             form.save()
-        
-#     else:
-#         form = CreateTaskForm(id=team.id)
 
-#     return render(request, 'create_task.html', {'form': form})
+class MyTeamsView(LoginRequiredMixin, View):
+    def get(self, request):
+        current_user = request.user
+        user_teams = current_user.teams.all()
 
-def task_list(request):
-    sort_by = request.GET.get('sort_by', 'due_date')  
+        return render(request, 'my_teams.html', {'user_teams': user_teams})
 
-    if sort_by == 'priority':
-        tasks = Task.objects.order_by('priority')  
-    elif sort_by == 'status':
-        tasks = Task.objects.order_by('-status')  # incomplete tasks first
-    elif sort_by == 'task_title':
-        tasks = Task.objects.order_by('task_title')  
-    else:  
-        tasks = Task.objects.order_by('due_date')
- 
-    filter_by = request.GET.get('filter_by', '')  
+class MyTasksView(LoginRequiredMixin, View):
+    def get(self, request):
+        current_user = request.user
+        user_teams = current_user.teams.all()
+        tasks = Task.objects.filter(assignees=current_user.id)
 
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
+        return render(request, 'my_tasks.html', {'user_teams': user_teams, 'user_tasks': tasks})
 
-    if filter_by == 'date_range' and start_date and end_date:
-        start_date = parse_date(start_date)
-        end_date = parse_date(end_date)
-        tasks = Task.objects.filter(due_date__range=[start_date, end_date])
-    elif filter_by == 'high_priority':
-        tasks = Task.objects.filter(priority='HI')  
-    elif filter_by == 'med_priority':
-        tasks = Task.objects.filter(priority='MD') 
-    elif filter_by == 'low_priority':
-        tasks = Task.objects.filter(priority='LW') 
-    elif filter_by == 'incomp_status':
-        tasks = Task.objects.filter(status='NOT_STARTED') 
-    elif filter_by == 'comp_status':
-        tasks = Task.objects.filter(status='COMPLETED') 
-
-    search = request.GET.get('search', '')  
-
-    if search:
-        tasks = Task.objects.filter(task_title__icontains=search)
-    
-
-    return render(request, 'task_list.html', {'tasks': tasks, 'sort_by': sort_by, 'filter_by': filter_by})
-
-def my_teams(request):
-    current_user = request.user
-    user_teams = current_user.teams.all()
-
-    return render(request, 'my_teams.html', {'user_teams': user_teams})
-
-def my_tasks(request):
-    current_user = request.user
-    user_teams = current_user.teams.all()
-    tasks = Task.objects.filter(assignees=current_user.id)
-
-    return render(request, 'my_tasks.html', {'user_teams': user_teams, 'user_tasks': tasks})
-
-
-def task_detail(request, task_title):
-    task = get_object_or_404(Task, pk=task_title)
-    return render(request, 'task_detail.html', {'task': task})
+class TaskDetailsView(LoginRequiredMixin, View):
+    def get(self, request, task_title):
+        task = get_object_or_404(Task, pk=task_title)
+        return render(request, 'task_detail.html', {'task': task})
 
 
 class EditTaskView(LoginRequiredMixin, View):

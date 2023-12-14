@@ -225,13 +225,9 @@ class CreateTeamForm(forms.ModelForm):
 class CreateTaskForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
-        self.team_id = kwargs.pop('team_id', None)
+        self.team_id = kwargs.pop('team_id')
         super(CreateTaskForm, self).__init__(*args, **kwargs)
-
-        if self.team_id:
-            self.fields['assignees'].queryset = User.objects.filter(teams__id=self.team_id)
-        else:
-            self.fields['assignees'].queryset = User.objects.none()
+        self.fields['assignees'].queryset = User.objects.filter(teams__id=self.team_id)
 
     def save(self, commit=True):
         task = super(CreateTaskForm, self).save(commit=False)
