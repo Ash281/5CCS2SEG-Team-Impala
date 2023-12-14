@@ -269,7 +269,6 @@ class CreateTaskForm(forms.ModelForm):
             if self.cleaned_data['status'] == "DONE":
                 task.hours_spent = task.duration()
                 for user in task.assignees.all():
-                    print("My jelly points")
                     user.jelly_points += task.jelly_points
                     user.save()
             task.save()

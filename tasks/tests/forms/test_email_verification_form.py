@@ -16,7 +16,6 @@ class EmailVeficationTestCase(TestCase):
         }
 
     def test_valid_email_verification_form(self):
-        print(User.objects.first())
         form = EmailVerificationForm(data=self.form_input)
         self.assertTrue(form.is_bound)
         self.assertTrue(form.is_valid())
