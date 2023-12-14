@@ -75,7 +75,7 @@ class Team(models.Model):
     team_description = models.CharField(max_length=150, blank=False, validators=[MinLengthValidator(10, message="Team description must be a minimum of 10 characters")])
 
     members = models.ManyToManyField(User, related_name='teams')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=False)
     team_admins = models.ManyToManyField(User, related_name='admin_teams', blank=True)
 
     class Meta:

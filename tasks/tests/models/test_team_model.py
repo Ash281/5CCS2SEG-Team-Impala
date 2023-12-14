@@ -16,6 +16,8 @@ class TeamModelTestCase(TestCase):
             'created_at' : '2020-03-01 00:00:00',
         }
     
+    ### Test team name ###
+
     def test_team_name_must_not_be_empty(self):
         self.form_input['team_name'] = ''
         form = CreateTeamForm(data=self.form_input)
@@ -42,6 +44,8 @@ class TeamModelTestCase(TestCase):
         form = CreateTeamForm(data=self.form_input)
         self.assertTrue(form.is_valid())
     
+    ### Test team description ###
+
     def test_team_description_must_not_be_empty(self):
         self.form_input['team_description'] = ''
         form = CreateTeamForm(data=self.form_input)
@@ -67,6 +71,35 @@ class TeamModelTestCase(TestCase):
         self.form_input['team_description'] = 'd' * 150
         form = CreateTeamForm(data=self.form_input)
         self.assertTrue(form.is_valid())
+    
+    ### Test team created_at field ###
+    def test_valid_created_at(self):
+        self.form_input['created_at'] = '2020-03-01 00:00:00'
+        form = CreateTeamForm(data=self.form_input)
+        self.assertTrue(form.is_valid())
+
+    def test_team_created_at_must_not_be_empty(self):
+        team = Team.objects.create(team_name="Example Team", team_description="Example Description")
+        self.assertIsNotNone(team.created_at)
+    
+    ### Test team members field ###
+    # def test_team_members_must_not_be_empty(self):
+    #     empty_member_data = {
+    #         'team_name': 'Test Team', 
+    #         'team_description': 'Test Description', 
+    #         'members': []
+    #     }
+    #     form = CreateTeamForm(data=empty_member_data)
+    #     self.assertFalse(form.is_valid())
+    
+    # def test_team_members_must_be_valid(self):
+    #     invalid_member_data = {
+    #         'team_name': 'Test Team', 
+    #         'team_description': 'Test Description', 
+    #         'members': [9999]  
+    #     }
+    #     form = CreateTeamForm(data=invalid_member_data)
+    #     self.assertFalse(form.is_valid())
     
     def _assert_team_is_valid(self):
         try:
