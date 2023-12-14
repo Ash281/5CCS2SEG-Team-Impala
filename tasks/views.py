@@ -31,21 +31,20 @@ def dashboard(request):
     """Display the current user's dashboard."""
 
     current_user = request.user
-    first_three = Task.objects.order_by('due_date')[:3]
-    next_three = Task.objects.order_by('due_date')[3:6]
     user_teams = current_user.teams.all()
     tasks = Task.objects.filter(assignees=current_user.id)
     todo_tasks_count = 0
     in_progress = 0
     complete_tasks = 0
-    for i in tasks.filter(status="TODO"):
-        todo_tasks_count += 1
-    for i in tasks.filter(status="IN_PROGRESS"):
-        in_progress += 1
-    for i in tasks.filter(status="DONE"):
-        complete_tasks += 1
+    for task in tasks:
+        if task.status == "TODO":
+            todo_tasks_count += 1
+        if task.status =="IN_PROGRESS":
+            in_progress += 1
+        if task.status =="DONE":
+            complete_tasks += 1
 
-    return render(request, 'dashboard.html', {'user': current_user, 'first_three': first_three, 'next_three': next_three, 'user_teams': user_teams,'to_do_tasks':todo_tasks_count,'in_progress' : in_progress, 'done' : complete_tasks})
+    return render(request, 'dashboard.html', {'user': current_user, 'user_teams': user_teams,'to_do_tasks':todo_tasks_count,'in_progress' : in_progress, 'done' : complete_tasks})
 
 
 @login_prohibited
