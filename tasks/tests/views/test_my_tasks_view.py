@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from tasks.models import Team, User, Task
 from tasks.forms import FilterPriorityForm,FilterDateRangeForm,SearchTaskForm
+from datetime import date
 
 class MyTaskViewTestCase(TestCase):
     """Tests of the delete task view."""
@@ -30,29 +31,34 @@ class MyTaskViewTestCase(TestCase):
         self.assertIn(self.team, team)
         self.assertTemplateUsed(response, 'my_tasks.html')
 
-    # def test_filter_not_none(self):
-    #     # Write a test for the priority filter form
-    #     self.client.login(username=self.user.username, password='Password123')
-    #     form = FilterPriorityForm(['high_priority'])
-    #     response = self.client.get(self.url)
-    #     # priority_filter = response.context.GET.get('filter_by_priority')
-    #     self.assertIsNotNone(response.context['priority'])
+    def test_priority_filter_url_correct(self):
+        # Write a test for the priority filter form
+        self.client.login(username=self.user.username, password='Password123')
+        form_data = {'priority': 'high_priority'}
+        response = self.client.get(self.url, form_data)
+        self.assertEqual(response.status_code, 200)
+        query_params = response.context['request'].GET
+        self.assertIn('priority', query_params)
+        self.assertEqual(query_params['priority'], 'high_priority')
 
+    def test_date_range_filter_url_correct(self):
+        # Write a test for the date range filter form
+        self.client.login(username=self.user.username, password='Password123')
+        form_data = {'start_date': date(2023,12,15), 'end_date': date(2030,12,31)}
+        response = self.client.get(self.url, form_data)
+        self.assertEqual(response.status_code, 200)
+        query_params = response.context['request'].GET
+        self.assertIn('start_date', query_params)
+        self.assertIn('end_date', query_params)
+        self.assertEqual(query_params['start_date'], '2023-12-15')
+        self.assertEqual(query_params['end_date'], '2030-12-31')
 
-    # def test_filter_date_range_form(self):
-    #     # Write a test for the date range filter form
-    #     self.client.login(username=self.user.username, password='Password123')
-    #     response = self.client.get(self.url)
-
-    #     start_date_filter = response.context.GET.get('start_date')
-    #     self.assertIsNotNone(start_date_filter)
-
-    #     end_date_filter = response.context.GET.get('end_date')
-    #     self.assertIsNotNone(end_date_filter)
-
-    # def test_search_task_form(self):
-    #     # Write a test for the search task form
-    #     self.client.login(username=self.user.username, password='Password123')
-    #     response = self.client.get(self.url)
-    #     priority_filter = response.context.GET.get('search')
-    #     self.assertIsNotNone(priority_filter)
+    def test_search_filter_url_correct(self):
+        # Write a test for the priority filter form
+        self.client.login(username=self.user.username, password='Password123')
+        form_data = {'search': 'hello'}
+        response = self.client.get(self.url, form_data)
+        self.assertEqual(response.status_code, 200)
+        query_params = response.context['request'].GET
+        self.assertIn('search', query_params)
+        self.assertEqual(query_params['search'], 'hello')
