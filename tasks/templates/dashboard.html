@@ -2,7 +2,7 @@
 {% extends 'base_content.html' %}
 
 {% block main_content %}
-<div class="row">
+<div class="row" style="justify-content: center";>
   <div class = "col-sm-12 col-md-5">
     <div class="card flex">
       <h2 class="cover-text">My Jelly Points</h2>
@@ -15,7 +15,7 @@
 
   <div class = "col-md-5">
     <div class="card">
-      <h2 class="cover-text">Number of Tasks TODO</h2>
+      <h2 class="cover-text">Number of Tasks To Do</h2>
       <div class="group">
         <h1>{{to_do_tasks}}</h1>
       </div>
@@ -23,10 +23,10 @@
     </div>
   </div>
 </div>
-<div class="row">
+<div class="row" style="justify-content: center";>
   <div class = "col-sm-12 col-md-5">
     <div class="containers card">
-      <h2 class="cover-text">Number of Tasks in Progress</h2>
+      <h2 class="cover-text">Number of Tasks In Progress</h2>
       <div class="group">
         <h1>{{in_progress}}</h1>
       </div>
