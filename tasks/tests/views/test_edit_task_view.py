@@ -58,6 +58,7 @@ class EditTaskTestCase(TestCase):
         form = response.context['form']
         self.assertTrue(isinstance(form, CreateTaskForm))
         self.assertTrue(form.is_bound)
+        self.assertFalse(form.is_valid)
     
     def test_succesful_edit_task(self):
         self.client.login(username=self.user.username, password='Password123')
