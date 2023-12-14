@@ -514,29 +514,27 @@ class DeleteTeamView(LoginRequiredMixin, View):
         return redirect('dashboard')
     
 class JoinTeamView(View):
-    get_fail_redirect_url = '/link_expired/'
+    get_fail_redirect_url = 'link_expired'
     def get(self, *args, **kwargs):
         token = kwargs.get('token')
         team_id = self.request.GET.get('team_id')  # Extract team_id from URL parameters
-        user = self.validate_token(token)
-
+        user, team = self.get_user_and_team(token, team_id)
+        
         if user and team_id:
-            # Add the user to the team
-            team = Team.objects.get(id=team_id)
             team.members.add(user)
-
             messages.add_message(self.request, messages.SUCCESS, "You've successfully joined the team!")
             return redirect('team_dashboard', id=team_id)
         else:
             messages.add_message(self.request, messages.ERROR, "Invalid or expired invitation")
             return redirect(self.get_fail_redirect_url)
     
-    def validate_token(self, token):
+    def get_user_and_team(self, token, team_id):
         try:
             user = User.objects.filter(email_verification_token=uuid.UUID(str(token))).first()
-            return user
+            team = Team.objects.get(id=team_id)
+            return user, team
         except:
-            return None
+            return None, None
         
 class LinkExpiredView(View):
     def get(self, request):
