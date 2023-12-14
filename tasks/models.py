@@ -26,7 +26,8 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank=False)
     email_verification_token = models.UUIDField(null=True, blank=True)
-    jelly_points = models.IntegerField(blank=False, null=False, default=0)
+    jelly_points = models.IntegerField(blank=False, null=False, default=0,
+                                       validators=[MinValueValidator(0, message="Jelly points must be a minimum of 0")])
 
 
     class Meta:
@@ -50,6 +51,13 @@ class User(AbstractUser):
         """Return a URL to a miniature version of the user's gravatar."""
         
         return self.gravatar(size=60)
+    
+    # def clean(self):
+    #     super.clean()
+    #     if self.jelly_points < 0:
+    #         raise ValidationError({'jelly_points': 'Jelly points cannot be negative.'})
+    #     if not isinstance(self.jelly_points, int):
+    #         raise ValidationError({'jelly_points': 'Jelly points must be an integer.'})
 
 class TeamManager(models.Manager):
     def create_team(self, team_name, team_description):
