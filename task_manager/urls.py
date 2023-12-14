@@ -36,6 +36,7 @@ urlpatterns = [
     path('team/<int:team_id>/add_members/', views.AddMembersView.as_view(), name='add_members'),
     path('email_verify/', views.EmailVerification.as_view(), name='email_verify'),
     path('join_team/<uuid:token>/', views.JoinTeamView.as_view(), name='join_team'),
+    path('link_expired/', views.LinkExpiredView.as_view(), name='link_expired'),
     path('leave_team/<int:id>/', views.LeaveTeamView.as_view(), name='leave_team'),
     path('team/<int:id>/delete/', views.DeleteTeamView.as_view(), name='delete_team'),
 

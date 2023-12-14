@@ -414,8 +414,6 @@ class CreateTeamView(LoginRequiredMixin, FormView):
         # print("Newly created team ID:", team.id)
         return redirect('team_dashboard', id=team.id)
 
-
-
 class TeamDashboardView(LoginRequiredMixin, View):
     """Display the dashboard for a specific team."""
     def parse_date(self, date):
@@ -619,6 +617,7 @@ class DeleteTeamView(LoginRequiredMixin, View):
         return redirect('dashboard')
     
 class JoinTeamView(View):
+    get_fail_redirect_url = '/link_expired/'
     def get(self, *args, **kwargs):
         token = kwargs.get('token')
         team_id = self.request.GET.get('team_id')  # Extract team_id from URL parameters
@@ -633,7 +632,7 @@ class JoinTeamView(View):
             return redirect('team_dashboard', id=team_id)
         else:
             messages.add_message(self.request, messages.ERROR, "Invalid or expired invitation")
-            return redirect(self.get_fail_redirect_url())
+            return redirect(self.get_fail_redirect_url)
     
     def validate_token(self, token):
         try:
@@ -641,3 +640,7 @@ class JoinTeamView(View):
             return user
         except:
             return None
+        
+class LinkExpiredView(View):
+    def get(self, request):
+        return render(request, 'link_expired.html')
