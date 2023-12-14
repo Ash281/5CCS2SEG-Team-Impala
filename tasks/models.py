@@ -74,7 +74,7 @@ class Team(models.Model):
     team_name = models.CharField(max_length=50, blank=False, validators=[MinLengthValidator(3, message="Team name must be a minimum of 3 characters")])
     team_description = models.CharField(max_length=150, blank=False, validators=[MinLengthValidator(10, message="Team description must be a minimum of 10 characters")])
 
-    members = models.ManyToManyField(User, related_name='teams')
+    members = models.ManyToManyField(User, related_name='teams', blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     team_admins = models.ManyToManyField(User, related_name='admin_teams', blank=True)
 
