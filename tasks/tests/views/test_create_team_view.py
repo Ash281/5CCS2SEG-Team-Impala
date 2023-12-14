@@ -46,6 +46,7 @@ class CreateTeamTestCase(TestCase):
         form = response.context['form']
         self.assertTrue(isinstance(form, CreateTeamForm))
         self.assertTrue(form.is_bound)
+        self.assertFalse(form.is_valid())
 
     
     def test_succesful_create_team(self):

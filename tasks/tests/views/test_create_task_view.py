@@ -41,7 +41,7 @@ class CreateTaskTestCase(TestCase):
         self.assertFalse(form.is_bound)
 
    
-    def test_unsuccesful_create_team(self):
+    def test_unsuccesful_create_task(self):
         self.client.login(username=self.user.username, password='Password123')
         self.form_input['task_description'] = 'Te'
         before_count = Team.objects.count()
@@ -74,7 +74,7 @@ class CreateTaskTestCase(TestCase):
         self.assertEqual(task.hours_spent, "")
 
 
-    def test_post_create_team_redirects_when_team_created(self):
+    def test_post_create_team_redirects_when_task_created(self):
         self.client.login(username=self.user.username, password='Password123')
         before_count = Task.objects.count()
         response = self.client.post(self.url, data=self.form_input, id=self.team.id, follow=True)

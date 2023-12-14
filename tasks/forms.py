@@ -263,7 +263,6 @@ class CreateTaskForm(forms.ModelForm):
         if commit:
             task.save()
             existing_assignees = task.assignees.all()
-            print(f"My assignees {existing_assignees}")
             #selected_users = [user for user in self.cleaned_data['assignees'] if user not in existing_assignees]
             task.assignees.set(self.cleaned_data['assignees'])  # Set the assignees to the selected users
             

@@ -129,7 +129,7 @@ class EditTaskView(LoginRequiredMixin, View):
     def get(self, request, task_title):
         task, team = self.get_task_and_team(task_title)
         form = CreateTaskForm(team_id=team.id, instance=task)
-        return render(request, self.template_name, {'form': form, 'task': task, 'members':team.members.all()})
+        return render(request, self.template_name, {'form': form, 'task': task, 'members':team.members.all(), 'id': team.id})
 
     def post(self, request, task_title):
         task, team = self.get_task_and_team(task_title)
@@ -137,7 +137,7 @@ class EditTaskView(LoginRequiredMixin, View):
         if form.is_valid():
             form.save()
             return redirect('team_dashboard', id=task.team.id)
-        return render(request, self.template_name, {'form': form, 'task': task, 'members':team.members.all()})
+        return render(request, self.template_name, {'form': form, 'task': task, 'members':team.members.all(), 'id': team.id})
     
     def get_task_and_team(self, task_title):
         task = get_object_or_404(Task, task_title=task_title)
@@ -290,7 +290,6 @@ class PasswordView(LoginRequiredMixin, FormView):
 
     def get_form_kwargs(self, **kwargs):
         """Pass the current user to the password change form."""
-        print(self.request.user)
         kwargs = super().get_form_kwargs(**kwargs)
         kwargs.update({'user': self.request.user})
         return kwargs
@@ -432,7 +431,7 @@ class CreateTaskView(LoginRequiredMixin, View):
             'team_description': team.team_description,
             'members': team.members.all(),
             'created_at': team.created_at,
-            'id': id
+            'id': team.id
         }
 
         return render(request, 'edit_task.html', context)
@@ -451,7 +450,7 @@ class CreateTaskView(LoginRequiredMixin, View):
                 'team_description': team.team_description,
                 'members': team.members.all(),
                 'created_at': team.created_at,
-                'id': id
+                'id': team.id
             }
             return render(request, 'edit_task.html', context)
     
@@ -494,7 +493,6 @@ class AddMembersView(LoginRequiredMixin, View):
         form = InviteMemberForm(request.POST)
         if form.is_valid():
             form.save()
-            print(team_id)
             messages.add_message(request, messages.SUCCESS, "Invitation sent successfully!")
         else:
             messages.add_message(request, messages.ERROR, "This user is either already in the team or does not exist!")
