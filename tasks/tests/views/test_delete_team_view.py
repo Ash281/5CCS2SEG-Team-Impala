@@ -28,4 +28,3 @@ class DeleteTeamViewTestCase(TestCase):
         self.assertEqual(before_count, after_count+1)
         response_url = reverse('dashboard')  
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        #self.assertTemplateUsed(response, 'team_dashboard.html')
