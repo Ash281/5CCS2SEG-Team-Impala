@@ -193,8 +193,22 @@ class TaskTestCase(TestCase):
     
     def test_created_at_less_than_equal(self):
         self.assertLessEqual(self.task.created_at, timezone.now())
+    
+    ### Test task hours_spent field ###
 
-    ### test duration for tasks ###
+    def test_hours_spent_can_be_blank(self):
+        self.task.hours_spent = ''
+        self._assert_task_is_valid()
+
+    def test_hours_spent_accepts_valid_data(self):
+        self.task.hours_spent = '5'
+        self._assert_task_is_valid()
+    
+    def test_hours_spent_cannot_be_over_500_characters(self):
+        self.task.hours_spent = 'x' * 501  
+        self._assert_task_is_invalid()
+
+    ### Test duration for tasks ###
 
     def test_duration_with_days(self):
         task = Task.objects.create(task_title="Test Task", task_description="Test Description")
