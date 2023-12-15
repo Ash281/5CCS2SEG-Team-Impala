@@ -2,10 +2,10 @@
 {% block body %}
   <div class="container vh-100">
     <div class="row h-100">
-      <div class="col-6 my-auto mx-auto" >
-        <script type="module" src="https://unpkg.com/@splinetool/viewer@0.9.522/build/spline-viewer.js"></script>
-        <spline-viewer url="https://prod.spline.design/XTSOcrsTbz6t7OoH/scene.splinecode"></spline-viewer>
-      </div>
+      <!--<div class="col-6 my-auto mx-auto" >-->
+      <!--  <script type="module" src="https://unpkg.com/@splinetool/viewer@0.9.522/build/spline-viewer.js"></script>-->
+      <!--  <spline-viewer url="https://prod.spline.design/XTSOcrsTbz6t7OoH/scene.splinecode"></spline-viewer>-->
+      <!--</div>-->
 
       <div class="col-6 my-auto" >
         <div class="card cover-card offset-md-2 offset-lg-3">
@@ -15,18 +15,18 @@
           <div class="btn-anchor">
             <a href='{% url "sign_up" %}' class="btn btn-lg btn-secondary">
               Sign up
-            </a>         
+            </a>
             <a href='{% url "log_in" %}' class="btn btn-lg btn-secondary">
               Log in
-            </a> 
+            </a>
           </div>
 
         </div>
-      </div>      
+      </div>
     </div>
     <div class="bottom-archor">
       <p class="cover-text">The task manager handcrafted for you</p>
     </div>
-      
+
   </div>
 {% endblock %}
