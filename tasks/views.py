@@ -388,7 +388,8 @@ class TeamDashboardView(LoginRequiredMixin, View):
             }
         )
 
-        addFiled = filter_function(request)
+        addFile = filter_function(request)
+        context.update(addFile)
         if request.user in team.members.all():
             return render(request, 'team_dashboard.html', context)
         else:
