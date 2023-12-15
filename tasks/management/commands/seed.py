@@ -60,9 +60,9 @@ task_fixtures = [
 class Command(BaseCommand):
     """Build automation command to seed the database."""
 
-    USER_COUNT = 10
-    TEAM_COUNT = 10
-    TASK_COUNT = 10
+    USER_COUNT = 300
+    TEAM_COUNT = 100
+    TASK_COUNT = 500
     DEFAULT_PASSWORD = 'Password123'
     help = 'Seeds the database with sample data'
 
@@ -219,8 +219,6 @@ class Command(BaseCommand):
 
     def create_task(self, data):
         assignees = data.get('assignees')[0]
-        assignees_user_obj = User.objects.filter(id=assignees.id).first()
-     
         team = data.get('team')[0]
         
         try:
@@ -229,16 +227,16 @@ class Command(BaseCommand):
             print("Team doesnt exist")
             # Handle the case when the team doesn't exist
             return None
-        
+                
         task1 = Task.objects.create(
             task_title=data['task_title'],
             task_description=data['task_description'],
             due_date=datetime.date.today() + datetime.timedelta(days=7),
             hours_spent='',
-            jelly_points='1',
-            priority='HI',
+            jelly_points=data['jelly_points'][0],
+            priority=data['priority'],
             team=team,
-            status='TODO'
+            status=data['status'][0]
         )
         task1.assignees.set(assignees)
 
