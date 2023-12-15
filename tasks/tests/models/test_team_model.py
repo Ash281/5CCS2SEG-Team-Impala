@@ -25,13 +25,30 @@ class TeamModelTestCase(TestCase):
     def test_description_method(self):
         team = Team(team_name="Test Team", team_description="Test Description")
         self.assertEqual(team.description(), "Test Description")
+    
+    def test_duration_with_days(self):
+        team = Team.objects.create(team_name="Test Team", team_description="Test Description")
+        fixed_now = timezone.now()
+        team.created_at = fixed_now - datetime.timedelta(days=2, hours=5, minutes=30)
 
-    def test_duration_method(self):
-        team = Team(team_name="Test Team", team_description="Test Description")
-        team.created_at = timezone.now() - datetime.timedelta(days=2, hours=3, minutes=30)
+        with patch('django.utils.timezone.now', return_value=fixed_now):
+            self.assertEqual(team.duration(), '2 days, 5 hours')
 
-        with patch('django.utils.timezone.now', return_value=team.created_at + datetime.timedelta(days=2, hours=3, minutes=30)):
-            self.assertEqual(team.duration(), "2 days, 3 hours")
+    def test_duration_with_hours_and_minutes(self):
+        team = Team.objects.create(team_name="Test Team", team_description="Test Description")
+        fixed_now = timezone.now()
+        team.created_at = fixed_now - datetime.timedelta(hours=3, minutes=45)
+
+        with patch('django.utils.timezone.now', return_value=fixed_now):
+            self.assertEqual(team.duration(), '3 hours, 45 minutes')
+
+    def test_duration_with_minutes_and_seconds(self):
+        team = Team.objects.create(team_name="Test Team", team_description="Test Description")
+        fixed_now = timezone.now()
+        team.created_at = fixed_now - datetime.timedelta(minutes=12, seconds=30)
+
+        with patch('django.utils.timezone.now', return_value=fixed_now):
+            self.assertEqual(team.duration(), '12 minutes, 30 seconds')
     
     ### Test team name ###
 
@@ -98,6 +115,11 @@ class TeamModelTestCase(TestCase):
     def test_team_created_at_must_not_be_empty(self):
         team = Team.objects.create(team_name="Example Team", team_description="Example Description")
         self.assertIsNotNone(team.created_at)
+    
+    def test_team_created_at_must_be_in_the_past(self):
+        self.form_input['created_at'] = '2021-03-01 00:00:00'
+        form = CreateTeamForm(data=self.form_input)
+        self.assertTrue(form.is_valid())
     
     def _assert_team_is_valid(self):
         try:

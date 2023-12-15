@@ -51,17 +51,15 @@ class User(AbstractUser):
         """Return a URL to a miniature version of the user's gravatar."""
         
         return self.gravatar(size=60)
-    
-    # def clean(self):
-    #     super.clean()
-    #     if self.jelly_points < 0:
-    #         raise ValidationError({'jelly_points': 'Jelly points cannot be negative.'})
-    #     if not isinstance(self.jelly_points, int):
-    #         raise ValidationError({'jelly_points': 'Jelly points must be an integer.'})
 
 class TeamManager(models.Manager):
     def create_team(self, team_name, team_description):
         """Create a new team."""
+
+        if not team_name:
+            raise ValueError("Team name cannot be empty")
+        if not team_description:
+            raise ValueError("Team description cannot be empty")
 
         team = self.create(team_name=team_name, team_description=team_description)
         return team
