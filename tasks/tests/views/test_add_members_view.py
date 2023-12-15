@@ -25,7 +25,7 @@ class AddMembersViewTestCase(TestCase):
     def test_add_members_url(self):
         self.assertEqual(self.url,f'/team/{self.team.id}/add_members/')
         
-    def test_valid_add_members_form(self):
+    def test_add_members_post(self):
         self.client.login(username=self.user.username, password='Password123')
         form = InviteMemberForm(data=self.form_input)
         response = self.client.post(self.url, {'username': '@janedoe', 'team_id': self.team.id, 'form': form})
@@ -33,6 +33,12 @@ class AddMembersViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'add_members.html')
         self.assertTrue(response.context['form'].is_valid())
         self.assertContains(response, 'Invitation sent successfully!')
+
+    def test_add_members_get(self):
+        self.client.login(username=self.user.username, password='Password123')
+        response = self.client.get(self.url, {'username': '@janedoe', 'team_id': self.team.id})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'add_members.html')
     
     def test_add_members_form_user_already_in_team(self):
         self.client.login(username=self.user.username, password='Password123')
