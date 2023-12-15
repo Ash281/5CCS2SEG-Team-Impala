@@ -239,29 +239,7 @@ class Command(BaseCommand):
             status=data['status'][0]
         )
         task1.assignees.set(assignees)
-
-        """
-        try:
-            Task.objects.create(
-                task_title=data['task_name'],
-                task_description=data['task_description'],
-                due_date=data['due_date'],
-                jelly_points=data['jelly_points'],
-                priority=data['priority'],
-                team=['team'],
-                status=data['status'],
-                hours_spent=['']
-
-            )
-        except:
-            print("THIS Doesnt work")
-        print("my task")
-        """
-
-
-        
-
-
+       
 
     def create_string(self, min, max):
         random_string = self.faker.text(max_nb_chars=max)
