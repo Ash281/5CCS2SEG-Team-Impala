@@ -48,3 +48,13 @@ class RemoveMembersViewTestCase(TestCase):
         self.assertEqual(after_count, before_count)
         #self.assertRedirects(response, url=reverse('team', args=[self.team.id]), status_code=302, target_status_code=200)
         #self.assertTemplateUsed(response, 'remove_member.html')
+
+    def test_no_members_selected(self):
+        self.client.login(username=self.user.username, password='Password123')
+        before_count = self.team.members.count()
+        response = self.client.post(self.url, data={'members_to_remove':[]}, follow=True)
+        after_count = self.team.members.count()
+        self.assertEqual(after_count, before_count)
+        self.assertContains(response, 'No members selected.')
+        #self.assertRedirects(response, url=reverse('team', args=[self.team.id]), status_code=302, target_status_code=200)
+        #self.assertTemplateUsed(response, 'remove_member.html')
