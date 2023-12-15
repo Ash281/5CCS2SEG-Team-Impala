@@ -388,7 +388,8 @@ class TeamDashboardView(LoginRequiredMixin, View):
             }
         )
 
-        addFiled = filter_function(request)
+        addFile = filter_function(request)
+        context.update(addFile)
         if request.user in team.members.all():
             return render(request, 'team_dashboard.html', context)
         else:
@@ -453,11 +454,8 @@ class RemoveMembersView(LoginRequiredMixin, View):
 
         for member_id in members_to_remove_ids:
             member_to_remove = get_object_or_404(User, id=member_id)
-            if member_to_remove in team.members.all():
-                team.members.remove(member_to_remove)
-                messages.add_message(request, messages.SUCCESS, f"Member {member_to_remove.username} removed successfully.")
-            else:
-                messages.add_message(request, messages.WARNING, f"Member {member_to_remove.username} is not in the team.")
+            team.members.remove(member_to_remove)
+            messages.add_message(request, messages.SUCCESS, f"Member {member_to_remove.username} removed successfully.")
         team.save()
         return redirect('team_dashboard', id=id)
     
