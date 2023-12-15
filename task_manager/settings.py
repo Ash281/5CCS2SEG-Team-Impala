@@ -26,9 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&$dln5wpgorppuw&(gintxm573v2ks+zq4o$(4*lapguixf^+2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["https://ash281.pythonanywhere.com/"]
+ALLOWED_HOSTS = ['ash2811.pythonanywhere.com']
 
 
 # Application definition
@@ -126,9 +126,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR,'static')
 ]
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'static')
-]
+STATIC_ROOT = '/home/ash2811/5CCS2SEG-Team-Impala/staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
