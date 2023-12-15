@@ -173,6 +173,8 @@ class TaskTestCase(TestCase):
         self._assert_task_is_invalid()
     
     ### Test jelly points field ###
+    def test_jelly_points_default_is_one(self):
+        self.assertEqual(self.task.jelly_points, 1)
 
     def test_task_jelly_points_cannot_be_negative(self): 
         self.task.jelly_points = -1
@@ -181,6 +183,14 @@ class TaskTestCase(TestCase):
     def test_task_jelly_points_cannot_be_zero(self): 
         self.task.jelly_points = 0
         self._assert_task_is_invalid()
+
+    def test_jelly_points_can_be_positive_with_range(self):
+        self.task.jelly_points = 5
+        self._assert_task_is_valid()
+    
+    def test_jelly_points_can_be_50(self):
+        self.task.jelly_points = 50
+        self._assert_task_is_valid()
 
     def test_task_jelly_points_cannot_be_over_50(self):
         self.task.jelly_points = 51

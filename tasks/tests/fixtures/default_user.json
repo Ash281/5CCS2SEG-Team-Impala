@@ -9,7 +9,8 @@
       "email": "johndoe@example.org",
       "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
       "is_active": true,
-      "email_verification_token" : null
+      "email_verification_token" : null,
+      "jelly_points": 0
     }
   }
 ]
