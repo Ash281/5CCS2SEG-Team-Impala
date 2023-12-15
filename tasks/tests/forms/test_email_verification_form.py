@@ -34,3 +34,13 @@ class EmailVeficationTestCase(TestCase):
         form.save()
         user = User.objects.get(username='@johndoe')
         self.assertIsNotNone(user.email_verification_token)
+    
+    def test_form_save_not_called_when_invalid(self):
+        invalid_form_input = {
+            'username': 'nonexistentuser'
+        }
+        form = EmailVerificationForm(data=invalid_form_input)
+        if form.is_valid():
+            form.save()
+        self.assertFalse(form.is_valid())
+        self.assertRaises(User.DoesNotExist, User.objects.get, username='nonexistentuser')
