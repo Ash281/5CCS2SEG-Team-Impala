@@ -4,24 +4,18 @@ from django.test import TestCase
 from tasks.models import Team, User
 
 class TeamManagerTestCase(TestCase):
+
+    fixtures = [
+        'tasks/tests/fixtures/default_user.json',
+        'tasks/tests/fixtures/default_team.json'
+    ]
+
     def setUp(self):
-        # self.team = Team.objects.get(team_name='Team Impala')
-        # self.user = User.objects.get(username='@johndoe')
-        # self.second_user = User.objects.get(username="@janedoe")
-        # self.task = Task.objects.get(task_title='Task 1')
-        # self.second_task = Task.objects.get(task_title='Task 2')
+        self.user = User.objects.get(username='@johndoe')
 
-        # Create a user if your Team model requires it
-        user = User.objects.create(username='@testuser', password='Testpassword123')
+        self.team = Team.objects.get(team_name='Team Impala')
 
-        # Create a team object for testing
-        self.team = Team.objects.create(
-            team_name='Team Impala',
-            team_description='SEG Group Coursework Project'
-        )
-
-        # Add the user to the team if necessary
-        self.team.members.add(user)
+        self.team.members.add(self.user)
 
     def test_create_team(self):
         team = Team.objects.create_team(team_name='Test Team', team_description='Test Description')

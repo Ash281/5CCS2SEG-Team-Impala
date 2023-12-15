@@ -11,6 +11,11 @@ import datetime
 class TeamModelTestCase(TestCase):
     """Unit tests for the Team model."""
 
+    fixtures = [
+        'tasks/tests/fixtures/default_team.json',
+        'tasks/tests/fixtures/other_teams.json'
+    ]
+
     def setUp(self):
         self.form_input = {
             'team_name': 'Team Impala',
