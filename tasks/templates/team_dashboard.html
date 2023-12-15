@@ -99,6 +99,7 @@
                                     {% if task.due_date >= start_date and task.due_date <= end_date or start_date is None or end_date is None %}
                                     {% if search in task.task_title or search is None %}
                                         {% include 'partials/task.html' %}
+                                        <p>{{ task.hours_spent }}</p>
                                     {% endif %}
                                     {% endif %}
                                 {% endif %}
