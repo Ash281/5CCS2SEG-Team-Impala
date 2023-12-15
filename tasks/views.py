@@ -119,8 +119,6 @@ class TaskDetailsView(LoginRequiredMixin, View):
         task = get_object_or_404(Task, pk=task_title)
         
         return render(request, 'task_detail.html', {'task': task})
-    
-
 
 class EditTaskView(LoginRequiredMixin, View):
     template_name = "edit_task.html"

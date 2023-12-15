@@ -15,60 +15,21 @@ class AddMembersViewTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.get(username='@janedoe')
         self.team = Team.objects.get(team_name='Team Impala')
-        self.user.email_verification_token = str(uuid.uuid4())
-        self.user.save()
-        self.user.refresh_from_db()
         self.url = reverse('add_members', args=[self.team.id])
     
     def test_add_members_url(self):
-        self.assertEqual(self.url,f'/add_members/{self.team.id}/')
+        self.assertEqual(self.url,f'/team/{self.team.id}/add_members/')
         
-    def test_join_team_url_with_valid_token_user_logged_in(self):
+    def test_valid_add_members_form(self):
         self.client.login(username=self.user.username, password='Password123')
-        self.assertEqual(self.url, f'/join_team/{self.user.email_verification_token}/')
-        response = self.client.get(self.url, {'team_id':self.team.id}, follow=True)
-        redirect_url = reverse('team_dashboard', args=[self.team.id])
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'team_dashboard.html')
+        response = self.client.post(self.url, {'username': '@johndoe', 'team_id': self.team.id})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'add_members.html')
     
-    def test_join_team_url_with_valid_token_user_logged_out(self):
-        self.assertEqual(self.url, f'/join_team/{self.user.email_verification_token}/')
-        response = self.client.get(self.url, {'team_id':self.team.id}, follow=True)
-        login_required = reverse('log_in')
-        aim_to_url = reverse('team_dashboard', args=[self.team.id])
-        redirect_url = f'{login_required}?next={aim_to_url}'
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'log_in.html')
-
-    
-    def test_join_team_url_with_different_token(self):
+    def test_add_members_form_user_already_in_team(self):
         self.client.login(username=self.user.username, password='Password123')
-        different_token_url = f'/join_team/{str(uuid.uuid4())}/'
-        self.assertNotEqual(self.url, different_token_url)
-        response = self.client.get(different_token_url, follow=True)
-        redirect_url = reverse('link_expired')
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'link_expired.html')
-
-    
-    def test_succesful_join_team(self):        
-        self.client.login(username=self.user.username, password='Password123')
-        before_count = self.team.members.count()
-        self.assertEqual(self.url, f'/join_team/{self.user.email_verification_token}/')
-        response = self.client.get(self.url, {'team_id':self.team.id}, follow=True)
-        after_count = self.team.members.count()
-        self.assertEqual(after_count, before_count+1)
-        self.assertIn(self.user, self.team.members.all())
-        redirect_url = reverse('team_dashboard', args=[self.team.id])
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'team_dashboard.html')
-
-    def test_join_team_url_with_invalid_team_id(self):
-        self.client.login(username=self.user.username, password='Password123')
-        self.assertEqual(self.url, f'/join_team/{self.user.email_verification_token}/')
-        wrong_team_id = 9
-        response = self.client.get(self.url, {'team_id': wrong_team_id}, follow=True)
-        redirect_url = reverse('link_expired')
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'link_expired.html')
-    
+        team = Team.objects.get(id=self.team.id)
+        team.members.add(self.user)
+        response = self.client.post(self.url, {'username': '@janedoe', 'team_id': self.team.id})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'add_members.html')
