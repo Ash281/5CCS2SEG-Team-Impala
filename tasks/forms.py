@@ -52,15 +52,27 @@ class EmailVerificationForm(forms.Form):
         return self.cleaned_data
     
     def save(self):
-        if self.is_valid():
-            username = self.cleaned_data.get("username")
-            user = User.objects.get(username=username)
+        # if self.is_valid():
+        #     username = self.cleaned_data.get("username")
+        #     user = User.objects.get(username=username)
 
-            token = str(uuid.uuid4())
-            self.send_email_verification(user.email, token)
+        #     token = str(uuid.uuid4())
+        #     self.send_email_verification(user.email, token)
 
-            user.email_verification_token = token
-            user.save()        
+        #     user.email_verification_token = token
+        #     user.save()        
+
+        if not self.is_valid():
+            raise ValueError("Cannot save the form because it's not valid")
+
+        username = self.cleaned_data.get("username")
+        user = User.objects.get(username=username)
+
+        token = str(uuid.uuid4())
+        self.send_email_verification(user.email, token)
+
+        user.email_verification_token = token
+        user.save()
     
     
     def send_email_verification(self, email, token):
@@ -82,7 +94,6 @@ class InviteMemberForm(forms.Form):
             user = User.objects.get(username=username)
             team = Team.objects.get(id=team_id)
 
-            # Check if the user is already in the team
             if user in team.members.all():
                 self.add_error('username', 'User is already in the team!')
         except User.DoesNotExist:
@@ -134,9 +145,11 @@ class NewPasswordMixin(forms.Form):
         """Save the user's new password."""
 
         new_password = self.cleaned_data['new_password']
-        if user is not None:
-            user.set_password(new_password)
-            user.save()
+        # if user is not None:
+        #     user.set_password(new_password)
+        #     user.save()
+        user.set_password(new_password)
+        user.save()
         return user
 
 class PasswordForm(NewPasswordMixin):
@@ -217,9 +230,13 @@ class CreateTeamForm(forms.ModelForm):
         """Create a new team."""
 
         team = super().save(commit=False)
-        if commit:
-            team.save()
-            self.save_m2m()  
+        # if commit:
+        #     team.save()
+        #     self.save_m2m()  
+
+        team.save()
+        self.save_m2m()  
+
         return team
     
 class FilterDateRangeForm(forms.Form):
@@ -260,18 +277,29 @@ class CreateTaskForm(forms.ModelForm):
     def save(self, commit=True):
         task = super(CreateTaskForm, self).save(commit=False)
         task.team_id = self.team_id 
-        if commit:
-            task.save()
-            existing_assignees = task.assignees.all()
-            #selected_users = [user for user in self.cleaned_data['assignees'] if user not in existing_assignees]
-            task.assignees.set(self.cleaned_data['assignees'])  # Set the assignees to the selected users
+        # if commit:
+        #     task.save()
+        #     existing_assignees = task.assignees.all()
+        #     #selected_users = [user for user in self.cleaned_data['assignees'] if user not in existing_assignees]
+        #     task.assignees.set(self.cleaned_data['assignees'])  # Set the assignees to the selected users
             
-            if self.cleaned_data['status'] == "DONE":
-                task.hours_spent = task.duration()
-                for user in task.assignees.all():
-                    user.jelly_points += task.jelly_points
-                    user.save()
-            task.save()
+        #     if self.cleaned_data['status'] == "DONE":
+        #         task.hours_spent = task.duration()
+        #         for user in task.assignees.all():
+        #             user.jelly_points += task.jelly_points
+        #             user.save()
+        #     task.save()
+
+        task.save()
+        existing_assignees = task.assignees.all()
+        task.assignees.set(self.cleaned_data['assignees'])  
+            
+        if self.cleaned_data['status'] == "DONE":
+            task.hours_spent = task.duration()
+            for user in task.assignees.all():
+                user.jelly_points += task.jelly_points
+                user.save()
+        task.save()
 
         return task
 
