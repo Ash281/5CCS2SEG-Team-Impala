@@ -27,6 +27,10 @@ class TaskTestCase(TestCase):
 
     def test_valid_task(self):
         self._assert_task_is_valid()
+    
+    def test_str_method(self):
+        task = Task(task_title="Test Task", task_description="Test Description")
+        self.assertEqual(str(task), "Test Task")
 
     def test_title_cannot_be_blank(self): 
         self.task.task_title = ''
