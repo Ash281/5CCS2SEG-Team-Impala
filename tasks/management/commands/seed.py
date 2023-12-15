@@ -60,9 +60,9 @@ task_fixtures = [
 class Command(BaseCommand):
     """Build automation command to seed the database."""
 
-    USER_COUNT = 30
-    TEAM_COUNT = 10
-    TASK_COUNT = 50
+    USER_COUNT = 300
+    TEAM_COUNT = 100
+    TASK_COUNT = 500
     DEFAULT_PASSWORD = 'Password123'
     help = 'Seeds the database with sample data'
 
