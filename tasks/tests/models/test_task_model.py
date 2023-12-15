@@ -4,6 +4,8 @@ from django.test import TestCase
 from tasks.models import Task, Team, User
 from django.utils import timezone
 from datetime import timedelta
+from unittest.mock import patch
+import datetime
 
 class TaskTestCase(TestCase):
     """Unit tests for the Task model."""
@@ -71,6 +73,8 @@ class TaskTestCase(TestCase):
     def test_title_may_contain_numbers(self): 
         self.task.task_title = 'task 2'
         self._assert_task_is_valid()
+    
+    ### Test task assignees field ###
 
     def test_assignees_can_be_blank(self): 
         self.task.assignees.clear()
@@ -80,6 +84,8 @@ class TaskTestCase(TestCase):
     def test_assignees_must_be_in_team(self):
         for assignee in self.task.assignees.all():
             self.assertIn(assignee, self.team.members.all())
+    
+    ### Test task due date field ###
 
     def test_due_date_cannot_be_before_today(self): 
         self.task.due_date = timezone.now().date() - timedelta(days=1)
@@ -88,6 +94,8 @@ class TaskTestCase(TestCase):
     def test_due_date_can_be_after_today(self): 
         self.task.due_date = timezone.now().date() + timedelta(days=1)
         self._assert_task_is_valid()
+
+    ### Test task status field ###
 
     def test_task_status_can_be_not_completed(self):
         valid_status_choices = [status[0] for status in Task.STATUS_CHOICES]
@@ -122,6 +130,8 @@ class TaskTestCase(TestCase):
         self.assertNotIn(my_status, valid_status_choices)
         self.task.status = my_status
         self._assert_task_is_invalid()
+
+    ### Test task priority field ###
    
     def test_task_priority_can_be_low(self):
         valid_priority_choices = [status[0] for status in Task.PRIORITY_CHOICES]
@@ -141,6 +151,7 @@ class TaskTestCase(TestCase):
         self.assertEqual(self.task.priority, my_priority)
 
         self._assert_task_is_valid()
+
     def test_task_priority_can_be_high(self):
         valid_priority_choices = [status[0] for status in Task.PRIORITY_CHOICES]
         my_priority = 'HI'
@@ -156,6 +167,8 @@ class TaskTestCase(TestCase):
         self.assertNotIn(my_priority, valid_priority_choices)
         self.task.priority = my_priority
         self._assert_task_is_invalid()
+    
+    ### Test jelly points field ###
 
     def test_task_jelly_points_cannot_be_negative(self): 
         self.task.jelly_points = -1
@@ -168,6 +181,8 @@ class TaskTestCase(TestCase):
     def test_task_jelly_points_cannot_be_over_50(self):
         self.task.jelly_points = 51
         self._assert_task_is_invalid()
+    
+    ### Test task created_at field ###
 
     def test_task_created_at_cannot_be_null(self):
         self.assertIsNotNone(self.task.created_at)
@@ -175,9 +190,33 @@ class TaskTestCase(TestCase):
     def test_created_at_less_than_equal(self):
         self.assertLessEqual(self.task.created_at, timezone.now())
 
-    
-    
+    ### test duration for tasks ###
 
+    def test_duration_with_days(self):
+        task = Task.objects.create(task_title="Test Task", task_description="Test Description")
+        fixed_now = timezone.now()
+        task.created_at = fixed_now - datetime.timedelta(days=2, hours=3, minutes=30)  
+
+        with patch('django.utils.timezone.now', return_value=fixed_now):
+            self.assertEqual(task.duration(), '2 days, 3 hours')
+
+    def test_duration_with_hours_and_minutes(self):
+        task = Task.objects.create(task_title="Test Task", task_description="Test Description")
+        fixed_now = timezone.now()
+        task.created_at = fixed_now - datetime.timedelta(hours=5, minutes=45)
+
+        with patch('django.utils.timezone.now', return_value=fixed_now):
+            self.assertEqual(task.duration(), '5 hours, 45 minutes')
+
+    def test_duration_with_minutes_and_seconds(self):
+        task = Task.objects.create(task_title="Test Task", task_description="Test Description")
+        fixed_now = timezone.now()
+        task.created_at = fixed_now - datetime.timedelta(minutes=12, seconds=30)
+
+        with patch('django.utils.timezone.now', return_value=fixed_now):
+            self.assertEqual(task.duration(), '12 minutes, 30 seconds')
+
+    
 
     def _assert_task_is_valid(self):
         try:
