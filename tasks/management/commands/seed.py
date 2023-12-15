@@ -60,9 +60,9 @@ task_fixtures = [
 class Command(BaseCommand):
     """Build automation command to seed the database."""
 
-    USER_COUNT = 300
-    TEAM_COUNT = 100
-    TASK_COUNT = 500
+    USER_COUNT = 30
+    TEAM_COUNT = 10
+    TASK_COUNT = 50
     DEFAULT_PASSWORD = 'Password123'
     help = 'Seeds the database with sample data'
 
@@ -128,16 +128,19 @@ class Command(BaseCommand):
         randomly_picked_users = random.sample(users_list, number_of_users_to_pick)
         team.members.set(randomly_picked_users)
  
-
+    def get_random_user_from_team(self, team):
+        team_users = Team.objects.get(id=team.id).members
+        
+        number_of_users_to_pick = random.randint(0, team_users.count())
+        users_list = list(team_users.all())
+        randomly_picked_users = random.sample(users_list, number_of_users_to_pick)
+        return randomly_picked_users
 
     def generate_random_tasks(self):
         task_count = Task.objects.count()
         while  task_count < self.TASK_COUNT:
             print(f"Seeding task {task_count}/{self.TASK_COUNT}", end='\r')
             self.generate_task()
-            
-            #last_task = Task.objects.all()[task_count]
-            #self.add_members_to_task(last_task)
 
             task_count = Task.objects.count()
         print("Tasks seeding complete.      ")
@@ -170,8 +173,8 @@ class Command(BaseCommand):
         due_date= self.faker.date(pattern='%Y-%m-%d'),
         jelly_points= self.faker.random_int(min=1, max=50),
         priority= self.faker.random_element(elements=PRIORITY_CHOICES),
-        assignees = get_random_user(),
         team = get_random_team(),
+        assignees = self.get_random_user_from_team(team[0]),
         status= self.faker.random_element(elements=STATUS_CHOICES),
         self.try_create_task({
             "task_title": task_name,
