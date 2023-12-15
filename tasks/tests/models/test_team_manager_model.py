@@ -26,7 +26,11 @@ class TeamManagerTestCase(TestCase):
 
         self.assertTrue(Team.objects.filter(team_name='Test Team').exists())
 
-    def test_team_creation_with_invalid_data(self):
+    def test_team_creation_with_empty_name(self):
         with self.assertRaises(ValueError):
             Team.objects.create_team(team_name='', team_description='Test Description')
+    
+    def test_team_creation_with_empty_description(self):
+        with self.assertRaises(ValueError):
+            Team.objects.create_team(team_name='Test Team', team_description='')
 
